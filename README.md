@@ -39,6 +39,29 @@ argument types to consider
    filename after **rm** *filename* is not an option, but a
    value.
 
+### internal_getopt Concepts
+
+This is not exhaustive, but is another record of questions and
+discoveries.
+
+### internal_getopt Arguments
+
+internal_getopt() collects the command options out of the list
+of arguments.  It only returns options, a separate pass through
+the **WORD_LIST** can retrieve string arguments.
+
+1. The first argument is a pointer to the **WORD_LIST** struct
+   from which the arguments are read.
+
+2. The second argument is a list of recognized option letters.
+   If the letter is followed by a colon, the option takes an argument,
+   if the letter is followed by another letter instead, the option
+   is a flag.
+
+### Collecting String Arguments
+
+Look at walk_args.c for an example collecting string arguments.
+
 ## References
 
 I haven't written any code yet, but I am collecting what I hope is
