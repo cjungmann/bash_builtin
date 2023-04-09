@@ -74,6 +74,15 @@ that I may want to find again.
   `bash/examples/loadables` directory and poked around in the source
   files for some of the standard builtin functions.
 
+  Under the cloned **bash** directory, the following files are of
+  particular interest:
+
+  - **bash/builtins/common.h** consolidates the contents of several
+    C source files.
+
+  -  **bash/variables.h** and **bash/variables.c** will help the
+     developer understand access to script variables.
+
 - **/usr/include/bash** contains several header files that appear to
   be designed for custom **Bash** builtins.
 
