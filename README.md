@@ -83,6 +83,10 @@ that I may want to find again.
   -  **bash/variables.h** and **bash/variables.c** will help the
      developer understand access to script variables.
 
+  - **bash/examples/loadables/asortr.c** is an example of working with
+    arrays, both regular and associative, particularly in function
+    sort_index.
+
 - **/usr/include/bash** contains several header files that appear to
   be designed for custom **Bash** builtins.
 
