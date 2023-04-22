@@ -107,7 +107,7 @@ static int fill_assoc_array(SHELL_VAR *svar)
    while (*arr_svars != NULL)
    {
       enbase_value( buff, sizeof(buff), ++counter, 2);
-      assoc_insert(assoc, buff, (*arr_svars)->name);
+      assoc_insert(assoc, savestring(buff), (*arr_svars)->name);
       ++arr_svars;
    }
 
