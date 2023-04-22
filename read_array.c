@@ -62,7 +62,8 @@ static int read_array(WORD_LIST *list)
 static char *desc_read_array[] = {
    "This function accepts a variable name of an array.",
    "Succeess in this code is accomplished if the name",
-   "can be attached and the elements can be printed."
+   "can be attached and the elements can be printed.",
+   (char*)NULL
 };
 
 
