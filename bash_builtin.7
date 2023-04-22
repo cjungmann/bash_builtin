@@ -59,7 +59,7 @@ Other exit codes may be found in
 .SH COLLECTIONS
 .PP
 There are
-.BR ARRAY "s and " LIST s.
+.BR ARRAY "s, " LIST "s, and " MAP s.
 The main difference is in how they are constructed and how they are
 traversed.
 .SS ARRAY
@@ -72,6 +72,31 @@ Refer to
 .BR command.h .
 .PP
 .BR WORD_LIST "s and " PATTERN_LIST s
+.SS MAP (AKA ASSOCIATIVE ARRAY)
+.PP
+Refer to
+.BR assoc.h .
+.PP
+Using the
+.B assoc_insert
+function has an unexpected requirement: although the
+.B value
+argument is automatically copied appropriatelyt, the
+.B key
+value must be a string in a heap-allocated memory location.
+Call it like:
+.IP
+.EX
+HASH_TABLE *htable = assoc_cell(var);
+alloc_insert(htable, savestring(key), value);
+.EE
+.PP
+with the
+.B key
+value enclosed in
+.BR savestring ,
+which is an internal Bash function that calls copies the string
+to a heap-allocated memory block.
 
 .SH C TEMPLATE
 .PP
