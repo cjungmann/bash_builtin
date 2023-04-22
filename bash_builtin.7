@@ -1,0 +1,83 @@
+.\" -*- mode: nroff -*-
+.TH bash_builtin 7 "2023-04-12" "Miscellaneous Information Manual"
+.SH NAME
+.PP
+.B bash_builtin
+\- Fundamentals for developing Bash loadable builtins in C
+.SH DESCRIPTION
+.PP
+This document is intended to serve as a memory aid for developers who
+have experience developing loadable builtins.
+It is also an delivery experiment, using
+.B groff
+to create content that is intended for direct use as a
+.B man page
+and, through transformation, as an HTML page for access on
+.BR GitHub .
+.PP
+Rather than a step-by-step guide, topics will be in presented in an
+order of anticipated most frequent need.
+Thus, the first steps, creating a
+.B Makefile
+and a basic source file template,
+will come at the end because they are rarely-needed hints.
+.PP
+That said, here is an index to the sections to help identify
+what kind of help is available, and the section titles to aid in
+jumping to remote sections.
+.TS
+tab(|);
+l lx.
+Return Values|T{
+Return approproate exit values
+T}
+Collections|T{
+Representative sets of multiples
+T}
+C Template|T{
+Skeleton of three basic required source objects
+T}
+Makefile|T{
+template with basic options for development in Gnu Linux
+T}
+.TE
+.SH RETURN VALUES
+.PP
+Builtins should use exit value constants for return values.
+.TS
+tab(|);
+lb lx.
+EXECUTION\(ulFAILURE|Generic failure code
+EXECUTION\(ulSUCCESS|Success code is 0, a lack of errors
+EX\(ulMISCERROR|Return to indicate unspecified error (EX_BADUSAGE)
+EX\(ulNOTFOUND|Return to indicate something not found (ie a file).
+EX\(ulBADASSIGN|Return if there was a problem with assigning a value.
+.TE
+.PP
+Other exit codes may be found in
+.BR shell.h .
+.SH COLLECTIONS
+.PP
+There are
+.BR ARRAY "s and " LIST s.
+The main difference is in how they are constructed and how they are
+traversed.
+.SS ARRAY
+.PP
+Refer to
+.BR array.h .
+.SS LIST
+.PP
+Refer to
+.BR command.h .
+.PP
+.BR WORD_LIST "s and " PATTERN_LIST s
+
+.SH C TEMPLATE
+.PP
+There are three basic C objects required to make a loadable builtin, the
+entry
+.BR function ", " "an  array of strings " "for a long description, and a " "struct builtin "
+structure that ties these items together.
+.EX
+.SH MAKEFILE
