@@ -1,6 +1,6 @@
 #include <builtins.h>
 #include <shell.h>
-#include <builtins/bashgetopt.h>  // for internal_getopt(), etc 
+#include <builtins/bashgetopt.h>  // for internal_getopt(), etc
 #include <builtins/common.h>      // for no_options()
 
 #include <stdio.h>
