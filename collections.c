@@ -88,6 +88,26 @@ int enbase_value(char *buff, unsigned int len, unsigned int value, unsigned int 
    return retval;
 }
 
+void dump_assoc_array(SHELL_VAR *svar)
+{
+   HASH_TABLE *assoc = assoc_cell(svar);
+   WORD_LIST *wl = assoc_keys_to_word_list(assoc);
+   if (wl)
+   {
+      WORD_LIST *ptr = wl;
+      char *value;
+      int count=0;
+      while (ptr)
+      {
+         value = assoc_reference(assoc, ptr->word->word);
+         printf("key %2d: '%s':'%s'\n", ++count, ptr->word->word, value);
+         ptr = ptr->next;
+      }
+
+      dispose_words(wl);
+   }
+}
+
 /**
  * @brief Demonstrate manipulating a Bash associative array.
  *
@@ -176,7 +196,10 @@ static int demo_collections(WORD_LIST *list)
       if (svar->attributes & att_array)
          retval = fill_array(svar);
       else if (svar->attributes & att_assoc)
+      {
+         dump_assoc_array(svar);
          retval = fill_assoc_array(svar);
+      }
       else if (svar->attributes & att_function)
       {
          printf("Not yet supporting variable type 'function'.\n");
