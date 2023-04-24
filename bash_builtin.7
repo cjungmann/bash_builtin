@@ -104,5 +104,10 @@ There are three basic C objects required to make a loadable builtin, the
 entry
 .BR function ", " "an  array of strings " "for a long description, and a " "struct builtin "
 structure that ties these items together.
+.PP
+There is a template file,
+.BR FNAME.c.template ,
+that is a minimal implementation of a do-nothing builtin function.
+Follow the checklist near the beginning of the template file
 .EX
 .SH MAKEFILE

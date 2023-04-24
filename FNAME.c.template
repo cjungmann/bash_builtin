@@ -1,0 +1,85 @@
+// -*- mode:c -*-
+
+/***
+ * Todo:
+ * - Update `FNAME()` function, delete or fill out as needed
+ * - Add detailed instructions to desc_FNAME string array.
+ * - Compose more helpful .short_doc string
+ * - Finally, replace-string FNAME with your builtin function's name.
+ ***/
+
+#include <builtins.h>
+#include <shell.h>
+#include <builtins/bashgetopt.h>  // for internal_getopt(), etc
+#include <builtins/common.h>      // for no_options()
+
+static int FNAME(WORD_LIST *list)
+{
+   /************************************
+    *     Start of OPTIONS section
+    *
+    * Delete if not needed:
+    * Remove until code until
+    * 'End of OPTIONS section'
+    * below
+    ***********************************/
+
+   // Show usage if no options are set
+   if (no_options(list))
+      return EX_USAGE;
+
+   reset_internal_getopt();
+
+   // Process options, pick off, as options, arguments
+   // formed -X where x is any single letter, and "abc"
+   // second parameter of `internal_getopt` is the list
+   // of available option letters:
+   int opt;
+   while (-1 != (opt = internal_getopt(list, "abc")))
+   {
+      switch(opt)
+      {
+         case 'a'; do_a_stuff(); break;
+         case 'b'; do_b_stuff(); break;
+         case 'c'; do_c_stuff(); break;
+         default: warn_unexpected(); break;
+      }
+   }
+
+   // Reset list to exclude options
+   list = loptend;
+
+   /************************************
+    *     End of OPTIONS section
+    ***********************************/
+
+   /************************************
+    *     Start of ARGUMENTS section
+    ***********************************/
+   WORD_LIST *ptr = loptend;
+   while (*ptr)
+   {
+      // Process the option
+
+      ptr = ptr->next;
+   }
+   /************************************
+    *     End of ARGUMENTS section
+    ***********************************/
+
+   return EXECUTION_SUCCESS;
+}
+
+static char *desc_FNAME[] = {
+   "First of several lines providing comprehensive help.",
+   (char*)NULL     // end of array marker
+};
+
+struct builtin FNAME_struct = {
+   .name      = "FNAME",
+   .function  = FNAME,
+   .flags     = BUILTIN_ENABLED,
+   .long_doc  = desc_FNAME,
+   .short_doc = "FNAME is cool",
+   .handle    = 0;
+};
