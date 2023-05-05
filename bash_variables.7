@@ -1,0 +1,97 @@
+.TH bash_variables 7 "Miscellaneous Information Manual" 2023-04-28
+.SH NAME
+.PP
+.B bash_variables
+\- Manipulating Bash Variables in a Bash Builtin
+.SH DESCRIPTION
+.PP
+Bash includes several standard variable types:
+.TS
+tab(|);
+lb lb lb
+l l l.
+type|option|description
+_
+generic|n/a|string variable that can be used in any context
+integer|-i|T{
+for integer values, warns upon attempt to store
+non-integer value
+T}
+array|-a|T{
+standard array, entry-order preserved.
+Implemented as a singly-linked list.
+T}
+associative|-A|T{
+Hashed-key collection of values.
+Entry order
+.B not
+preserved.
+T}
+nameref|-n|T{
+indirect access to another variable through an alias name
+T}
+.TE
+.SH GENERIC VARIABLE
+.PP
+This is the variable type created when no options are specified
+when a the variable is created with
+.BR declare " or " local .
+
+.SS ACCESS
+.SS CREATION
+.SS REFERENCE
+
+.SH INTEGER VARIABLE
+.PP
+This variable type insists on integer values, and emits an
+error upon an attempt to assign it a non-integer value.
+.SS ACCESS
+.SS CREATION
+SHELL_VAR* bind_int_variable(const char *name, const char *value, flags)
+.SS REFERENCE
+
+
+.SH ARRAY
+.PP
+Simple collection of values that retains the order in which
+they are added to the variable.
+.SS ACCESS
+.SS CREATION
+.PP
+.EX
+unbind_global_variable_noref("BASH_REMATCH");
+SHELL_VAR* make_new_array_variable("BASH_REMATCH");
+assign_array_var_from_word_list(target, wlist, 0/*?*/);
+WORD_LIST *array_to_word_list(ARRAY*);
+WORD_LIST *array_keys_to_word_list(ARRAY*);
+.EE
+.SS REFERENCE
+.PP
+.I /bash_source/lib/sh/shmatch.c
+includes code that populates the
+.B BASH_REMATCH
+array with the results of a regular expression match.
+
+.SH ASSOCIATIVE ARRAY
+.PP
+An associative array is an array whose elements are accessed through
+hashed key values.
+.SS ACCESS
+.TP
+.B Get All Key Values \fR\(Do{!name[@]} \fP
+Use Bash Builtin function
+.BR assoc_keys_to_word_list() ,
+which is equivalent to the script code
+.IR \(Do{!name[@]} .
+.SS CREATION
+.SS REFERENCE
+.PP
+The functions discussed in the section are found in
+.BR assoc.h .
+
+.SH TEMPLATE
+.PP
+Description
+.SS ACCESS
+.SS CREATION
+.SS REFERENCE
