@@ -5,7 +5,7 @@
  * - Update `FNAME()` function, delete or fill out as needed
  * - Add detailed instructions to desc_FNAME string array.
  * - Compose more helpful .short_doc string
- * - Finally, replace-string FNAME with your builtin function's name.
+ * - Finally, replace-string <FNAME> with your builtin function's name.
  ***/
 
 #include <builtins.h>
@@ -13,7 +13,7 @@
 #include <builtins/bashgetopt.h>  // for internal_getopt(), etc
 #include <builtins/common.h>      // for no_options()
 
-static int FNAME(WORD_LIST *list)
+static int <FNAME>(WORD_LIST *list)
 {
    /************************************
     *     Start of OPTIONS section
@@ -35,18 +35,24 @@ static int FNAME(WORD_LIST *list)
    // second parameter of `internal_getopt` is the list
    // of available option letters:
    int opt;
-   while (-1 != (opt = internal_getopt(list, "abc")))
+   while (-1 != (opt = internal_getopt(list, "abc:")))
    {
       switch(opt)
       {
-         case 'a'; do_a_stuff(); break;
-         case 'b'; do_b_stuff(); break;
-         case 'c'; do_c_stuff(); break;
-         default: warn_unexpected(); break;
+         case 'a': break;
+         case 'b': break;
+         case 'c':
+            // The option value, when the letter is followed by a ':'
+            // as in 'c:' in call to `internal_getopt` above, is
+            // found in the the `list_optarg` variable when the
+            // letter is matched.
+            break;
+         default: do_stuff(); break;
       }
    }
 
-   // Reset list to exclude options
+   // ONLY IF USING `internal_getopt`, reset the list
+   // to process any remaining non-option arguments:
    list = loptend;
 
    /************************************
@@ -56,8 +62,9 @@ static int FNAME(WORD_LIST *list)
    /************************************
     *     Start of ARGUMENTS section
     ***********************************/
-   WORD_LIST *ptr = loptend;
-   while (*ptr)
+
+   WORD_LIST *ptr = list;
+   while (ptr)
    {
       // Process the option
 
@@ -70,16 +77,16 @@ static int FNAME(WORD_LIST *list)
    return EXECUTION_SUCCESS;
 }
 
-static char *desc_FNAME[] = {
+static char *desc_<FNAME>[] = {
    "First of several lines providing comprehensive help.",
    (char*)NULL     // end of array marker
 };
 
-struct builtin FNAME_struct = {
-   .name      = "FNAME",
-   .function  = FNAME,
+struct builtin <FNAME>_struct = {
+   .name      = "<FNAME>",
+   .function  = <FNAME>,
    .flags     = BUILTIN_ENABLED,
-   .long_doc  = desc_FNAME,
-   .short_doc = "FNAME is cool",
-   .handle    = 0;
+   .long_doc  = desc_<FNAME>,
+   .short_doc = "<FNAME> is cool",
+   .handle    = 0
 };
