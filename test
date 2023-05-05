@@ -10,6 +10,7 @@ declare -a enables=(
     write_array
     identify_name
     func_callback
+    func_callout
     demo_collections
     show_attributes
 )
@@ -228,6 +229,7 @@ test_func_callback()
     {
         echo "You made it to 'nested_function()'."
         echo "nested_function received $# arguments."
+        echo "The arguments are: '$@'"
     }
 
     cat <<EOF
@@ -236,7 +238,59 @@ EOF
 
     func_callback "test_write_array"
     func_callback "nested_function" arg1 arg2 arg3
+    func_callback "ip" "-V"
     func_callback "ip" "address"
+}
+
+####################################################################
+test_func_callout()
+{
+    local -a values=(
+        first
+        second
+        third
+        fourth
+        fifth
+        sixth
+    )
+
+    local -i ndx=0;
+
+    nested_function()
+    {
+        local -n nf_var="$1"
+        if [ "$#" -gt 1 ]; then
+            local -n valarr="$2"
+         else
+             local -n valarr="values"
+        fi
+
+        if [ $ndx -lt "${#valarr[*]}" ]; then
+            nf_var="${valarr[$ndx]}"
+            (( ++ndx ))
+            return 0
+        fi
+
+        return 1
+    }
+
+
+
+    cat <<EOF
+This tests the ability of a C program to call out to a shell
+function with a variable name, with the expectation that the
+called function will populate the variable of that name using
+a nameref variable.
+EOF
+
+    func_callout "nested_function"
+
+    echo
+    echo "About to reset the index and run again with a namereffed array:"
+    ndx=0
+    local -a altarray=( un dos tres quatre cinq six )
+    func_callout "nested_function" "altarray"
+
 }
 
 ####################################################################
@@ -268,4 +322,5 @@ test_demo_collections()
 # test_write_array
 # test_identify_name
 # test_func_callback
-test_demo_collections
+test_func_callout
+# test_demo_collections
