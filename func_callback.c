@@ -23,6 +23,10 @@ static int func_execute_command(WORD_LIST *list)
    // // need it, but leaving it here to remind me if I need it later.
    // begin_unwind_frame("func_execute_command");
 
+   printf("Using \x1b[32;1mexecute_command\x1b[m "
+          "to call shell function \x1b[32;1m%s\x1b[m:\n",
+          list->word->word);
+
    COMMAND *command;
    command = make_bare_simple_command();
    command->value.Simple->words = (WORD_LIST*)copy_word_list(list);
@@ -31,6 +35,11 @@ static int func_execute_command(WORD_LIST *list)
    command->flags = flags;
 
    retval = execute_command(command);
+
+   if (retval)
+      printf("Attempt \x1b[31;mFAILED\x1b[m with error %d.\n", retval);
+   else
+      printf("Attempt \x1b[32;1mSUCCEEDED\x1b[m.\n");
 
    // // Mate to begin_unwind_frame above
    // run_unwind_frame("func_execute_command");
@@ -43,15 +52,25 @@ static int func_execute_shell_function(WORD_LIST *list)
    int retval = EXECUTION_FAILURE;
    const char *fname = list->word->word;
 
+   printf("Using \x1b[32;1mexecute_shell_function\x1b[m "
+          "to call shell function \x1b[32;1m%s\x1b[m:\n",
+          fname);
+
    SHELL_VAR *svar = find_function(fname);
    if (svar)
+   {
       retval = execute_shell_function(svar, list);
+
+      if (retval)
+         printf("Attempt \x1b[31;mFAILED\x1b[m with error %d.\n", retval);
+      else
+         printf("Attempt \x1b[32;1mSUCCEEDED\x1b[m.\n");
+   }
    else
-      printf("%s is an unknown function.\n", fname);
+      printf("\x1b[31;1mFAILED\x1b[m: %s is an unknown function.\n", fname);
 
    return retval;
 }
-
 
 static int func_callback(WORD_LIST *list)
 {
@@ -64,6 +83,9 @@ static int func_callback(WORD_LIST *list)
       builtin_usage();
       return EX_USAGE;
    }
+
+   const char *function_name = list->word->word;
+   printf("\n\x1b[32;1m%s\x1b[m to be called from C function func_callback\n", function_name);
 
    retval = func_execute_command(list);
    retval = func_execute_shell_function(list);
