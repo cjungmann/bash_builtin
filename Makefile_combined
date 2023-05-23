@@ -1,4 +1,4 @@
-# -*- mode: makefile -*-
+TARGET = builtin.so
 
 PREFIX ?= /usr/local
 SRC = .
@@ -13,7 +13,6 @@ LFLAGS += --shared
 
 # Build module list (info make -> "Functions" -> "File Name Functions")
 MODULES = $(addsuffix .o,$(basename $(wildcard $(SRC)/*.c)))
-BUILTINS = $(addsuffix .so,$(basename $(wildcard $(SRC)/*.c)))
 
 # Libraries need header files.  Set the following accordingly:
 HEADERS =
@@ -21,10 +20,10 @@ HEADERS =
 # Declare non-filename targets
 .PHONY: all install uninstall clean help
 
-all: $(BUILTINS)
+all: $(TARGET)
 
-%so : %o
-	$(CC) $(LFLAGS) -o $@ $< $(LDFLAGS)
+$(TARGET) : $(MODULES)
+	$(CC) $(LFLAGS) -o $@ $(MODULES) $(LDFLAGS)
 
 %o : %c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -46,7 +45,7 @@ uninstall:
 	rm -f $(PREFIX)/include/$(HEADERS)
 
 clean:
-	rm -f *.so
+	rm -f $(TARGET)
 	rm -f $(MODULES)
 
 help:
