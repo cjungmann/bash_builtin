@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+enable_builtin()
+{
+    local name="$1"
+    local -a args=(
+        -f "./${name}.so"
+        "${name}"
+    )
+
+    enable "${args[@]}"
+    if [ "$?" -ne 0 ]; then
+        echo "Failed to enable builtin $name."
+        exit 1
+    fi
+}
+
+enable_builtin "func_callin"
+
+
+callback()
+{
+    echo "Received a call from 'func_callin' builtin."
+    local -n callin="$1"
+
+    printf $'The callin function is \e[32;1m%s\e[m\n' "$callin"
+
+    # "$callin"
+}
+
+echo "About to call 'func_callin'"
+func_callin "callback"

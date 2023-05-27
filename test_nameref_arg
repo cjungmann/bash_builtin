@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+cat <<EOF
+${B}
+Demonstrate builtin function 'nameref_arg'
+==========================================
+${X}
+This is where the coding gets more real, attempting to see if
+a variable can be read by reference (as if by ${B}local -n ref='name'${X}.
+
+In this test, a variable named ${B}bogus${X} will be initialized with
+an identifiable phrase, ${I}Value going in${X}.  When the function
+${B}nameref_arg${X} will announce the value if finds, and then will
+replace the value to be announced by the script when the ${B}nameref_arg${X}
+function returns.
+
+The second argument will simply be a global environment variable to be
+announced in the function.
+
+Calling:
+${B}nameref_arg${X} ${I}bogus USED${X}
+EOF
+
+declare bogus="Value going in"
+nameref_arg bogus USER
+
+echo "The value of ${B}bogus${X} upon return, is ${I}$bogus${X}."
+

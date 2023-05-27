@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+cat <<EOF
+${B}
+Demonstrate function hellow
+===========================
+${X}
+This is a test of my first Bash loadable builtin.  Besides
+simply printing a message to announce itself, it shows the
+process ID to confirm that the custom Bash builtin is in the
+save process as the caller.  This is necessary to ensure that
+variables set in the C code can be read in the Bash script
+upon return.
+
+Previously, I had some tests for unexpected arguments.  I no
+longer include these tests in the script after more experience
+developing loadable builtins.
+
+By the way, the process Id of this script is $$.
+
+With no further delay, let's run function ${B}hellow${X}.
+
+EOF
+
+hellow
+
+

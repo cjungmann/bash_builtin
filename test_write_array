@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+cat <<EOF
+There is not much to see in this test.  It creates a simple array
+of number names, calls the ${B}write_array${X} builtin, which changes
+the contents of the array, then upon return, this script displays
+the new array contents.
+
+EOF
+
+declare -a myarray=( One Two Three Four Five Six )
+echo "Before calling 'write_array', myarray is '${myarray[*]}'"
+write_array "myarray"
+echo "AFTER calling 'write_array', myarray is '${myarray[*]}'"

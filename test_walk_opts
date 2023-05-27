@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+cat <<EOF
+${B}
+Demonstrate builtin function 'walk_opts'
+========================================
+${X}
+The second of my experiments explores how to parse the
+arguments of a builtin function call.
+
+Options are string arguments that have a hyphen prefix.
+Normally, options may or may not include a value, but in
+this early learning experiment, this we're only identifying
+options used.
+
+Calling:
+${B}walk_opts${X} ${I}-a -b${X}
+EOF
+
+walk_opts -a -b

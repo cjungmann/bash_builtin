@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+run_test()
+{
+    echo "Making an array, then submitting it to ${B}demo_collections${X} builtin."
+    local -a numbers_array=( one two three four five six )
+    demo_collections numbers_array
+    echo "I suspect nothing happened.  Sorry to disappoint you."
+}
+
+
+cat <<EOF
+The ${B}demo_collections${X} is a sandbox for playing around with
+Bash collections like arrays and associative arrays.  It doesn't
+really do anything useful on its own.  However, since it is a C
+file, and thus the builtin will automatically be built, I might as
+well complete the exercise by also including a test script to
+exercise it.
+
+EOF
+
+run_test
+

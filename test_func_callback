@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+test_write_array()
+{
+    echo "In function ${B}test_write_array${X}."
+    if [ "$#" -gt 1 ]; then
+        echo "There are ${#} arguments."
+    else
+        echo "There are no arguments."
+    fi
+}
+
+run_test()
+{
+    local cmd="$1"
+    local -a args=( ${@:2} )
+
+    echo $'\e[2J'
+
+    echo "About to call ${B}func_callback $cmd${X} with arguments ${I}${args[*]}${X}."
+
+    echo
+    func_callback "$cmd" "${args[@]}"
+    echo
+
+    read -n1 -p "Press any key to continue"
+}
+
+start_test()
+{
+    nested_function()
+    {
+        echo "You made it to 'nested_function()'."
+        echo "nested_function received $# arguments."
+        echo "The arguments are: '$@'"
+    }
+
+    run_test "test_write_array"
+    run_test "nested_function" arg1 arg2 arg3
+    run_test "ip" "-V"
+    run_test "ip" "address"
+}
+
+
+cat <<EOF
+This test consists of several tests I conducted while trying to
+get a better understanding of how a Bash builtin might call out
+to a Bash script function.
+
+The builtin function, ${B}func_callback${X}, prepares and calls
+the passed-in function name using ${B}execute_shell_function${X} and
+${B}execute_command${X}.  In using both, I am trying to detect a
+pattern that might cause me to prefer one over the other.
+
+Note that these two function, ${B}execute_shell_function${X} and
+${B}execute_command${X} are not exposed in the standard Bash builtin
+include files.  I copied the prototype out of the Bash source code
+and included in my source file.
+
+One possible advantage of using ${B}execute_command${X} is that a
+COMMAND object/struct contains a WORD_LIST member that includes
+both the function name and arguments for the call.  Since the
+COMMAND object/struct is one of the supported data types for a
+SHELL_VAR, this might be an avenue for passing a callable function
+to a Bash script from a builtin.
+
+EOF
+
+read -n1 -p Press\ any\ key\ to\ begin.
+
+start_test

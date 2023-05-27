@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+source mod_common
+
+declare -a my_builtins=(
+    hellow
+    walk_opts
+    walk_args
+    nameref_arg
+    demo_collections
+    read_array
+    write_array
+    identify_name
+    func_callback
+    func_callout
+    show_attributes
+)
+
+declare -i count="${#my_builtins[*]}"
+declare -i index=0
+declare builtin
+for builtin in "${my_builtins[@]}"; do
+    printf $'\e[2J'
+    printf "${B}%2d${X} out of ${B}%2d${X}: %s\n" $(( ++index )) $count $builtin
+    read -n1 -p "Type 'y' run test, 's' to skip, 'q' to quit "
+    case "$REPLY" in
+        'y' )
+            ./"test_${builtin}"
+            read -n1 -p "Press any key to continue"
+            ;;
+        's' )
+            continue ;;
+        'q' )
+            break ;;
+    esac
+done

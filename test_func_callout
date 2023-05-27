@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+
+run_test()
+{
+    # variables external to callback function from which
+    # values will be snagged.
+    local -i ndx=0;
+    local -a values=(
+        first
+        second
+        third
+        fourth
+        fifth
+        sixth
+    )
+
+    nested_function()
+    {
+        local -n nf_var="$1"
+        local -n valarr="${2:-values}"
+
+        if [ $ndx -lt "${#valarr[*]}" ]; then
+            nf_var="${valarr[$ndx]}"
+            (( ++ndx ))
+            return 0
+        fi
+
+        return 1
+    }
+
+
+
+    echo "About to call ${B}func_callout${X} with a callback providing"
+    echo "a set of english number names."
+    echo
+    func_callout "nested_function"
+
+    echo
+    echo "About to call ${B}func_callout${X} with a second parameter"
+    echo "which will be transferred to the callback function to"
+    echo "override the default array source of values."
+    ndx=0
+    local -a altarray=( un dos tres quatre cinq six )
+    func_callout "nested_function" "altarray"
+
+}
+
+cat <<EOF
+This tests a technique for a Bash builtin function to poll for
+information from a shell script function.
+
+The builtin function ${B}func_callout${X} will be called with
+the name of a script function that the builtin can call.  The
+callback function will provide a single value for each call,
+transferred by setting the value of a nameref variable.
+
+EOF
+
+run_test

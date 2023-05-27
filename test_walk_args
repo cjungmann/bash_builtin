@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable "walk_args"
+
+
+cat <<EOF
+${B}
+Demonstrate builtin function 'walk_args'
+========================================
+${X}
+This third experiment simply walks arguments.  While working
+on these experiments, I noticed how example code processed
+options in one loop, and the processes non-option arguments
+in a second loop.
+
+Calling:
+${B}walk_args${X} ${I}Jack Jill John Joan Jenny George${X}
+EOF
+
+walk_args Jack Jill John Joan Jenny George

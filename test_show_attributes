@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+bogus_test()
+{
+    echo "Function to see if show_attributes can identify a function variable"
+}
+
+run_test()
+{
+    local genericvar="generic"
+    local -i intvar=1
+    local -a arrvar=( 1 2 3 4 5 )
+    local -A hashvar=( 1 "one" 2 "two" 3 "three" )
+    local -F funcvar=bogus_func
+    local -a post_assign_arr
+
+    declare post_assign_arr=( 5 4 3 2 1 )
+
+    local -a args=(
+        genericvar
+        intvar
+        arrvar
+        hashvar
+        funcvar
+        post_assign_arr
+        bogus_test
+    )
+
+    for arg in "${args[@]}"; do
+        read -n1 -p "Press any key to itemize attributes of ${B}${arg}${X}."
+        echo $'\e[2J'
+        show_attributes "$arg"
+    done
+}
+
+cat <<EOF
+This is a simple test of the ${B}show_attributes${X} builtin function.
+
+The test will try different variable types to observe the outout.
+
+I intend to assign and identify a function variable, that is one that
+is created with the ${B}-f${X} option.
+EOF
+
+run_test
