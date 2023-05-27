@@ -87,8 +87,8 @@ static int func_callback(WORD_LIST *list)
    const char *function_name = list->word->word;
    printf("\n\x1b[32;1m%s\x1b[m to be called from C function func_callback\n", function_name);
 
-   retval = func_execute_command(list);
    retval = func_execute_shell_function(list);
+   retval = func_execute_command(list);
 
    return retval;
 }
