@@ -4,6 +4,8 @@
 #include <builtins/bashgetopt.h>  // for internal_getopt(), etc.
 #include <builtins/common.h>      // for no_options()
 
+#include "word_list_stack.h"
+
 #include <stdio.h>
 
 // Copied from execute_cmd.h from bash source code, using code in command.h.
@@ -23,7 +25,9 @@ static int func_callout(WORD_LIST *list)
    int retval = EXECUTION_FAILURE;
 
    WORD_LIST *exec_params = NULL;
+   WORD_LIST *tail = NULL;
 
+   // The first argument should be the name of the callback function:
    const char *func_to_call = list->word->word;
    if (!func_to_call)
    {
@@ -32,9 +36,13 @@ static int func_callout(WORD_LIST *list)
       goto exit;
    }
 
+   // Start building the arguments WORD_LIST for the call:
    SHELL_VAR *svFunc = find_function(func_to_call);
    if (svFunc)
-      exec_params = bb_append_string_to_word_list(exec_params, func_to_call);
+   {
+      WL_APPEND(tail, func_to_call);
+      exec_params = tail;
+   }
    else
    {
       builtin_error("Unable to find shell function %s.", func_to_call);
@@ -46,22 +54,30 @@ static int func_callout(WORD_LIST *list)
    SHELL_VAR *newvar = make_local_variable(var_to_pass, 0);
    if (newvar)
    {
-      if (!bb_append_string_to_word_list(exec_params, var_to_pass))
+      // Required argument, the name of a SHELL_VAR into which the
+      // callback function will store values that we'll consume here.
+      WL_APPEND(tail, var_to_pass);
+      if (tail == NULL)
       {
          dispose_variable(newvar);
          goto exit;
       }
 
+      // Optional argument passed to the callback function if
+      // submitted to this builtin function
       const char *aname = NULL;
       if (list->next && (aname=list->next->word->word))
       {
-         if (!bb_append_string_to_word_list(exec_params, aname))
+         WL_APPEND(tail, aname);
+         if (tail == NULL)
          {
             dispose_variable(newvar);
             goto exit;
          }
       }
 
+      // This is where the callback occurs.  It will keep invoking
+      // the callback while the callback returns SUCCESS (0).
       int count = 0;
       while (!(retval = execute_shell_function(svFunc, exec_params)))
       {
@@ -73,7 +89,6 @@ static int func_callout(WORD_LIST *list)
    }
 
   exit:
-   bb_free_word_list(exec_params);
    return retval;
 }
 
