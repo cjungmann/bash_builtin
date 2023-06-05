@@ -31,6 +31,51 @@ nameref|-n|T{
 indirect access to another variable through an alias name
 T}
 .TE
+.SH SETTING VARIABLES
+.SS MISTYPED VARIABLES
+.PP
+In a script, declaring a variable with the
+.B -i
+(integer) option limits what can be done with the variable.
+If a string value is assigned to an integer variable, Bash will
+sometimes issue a warning, other times it will simply set the
+integer value to 0.
+.PP
+From a developer's standpoint, and this point may be debated, it
+would be better to warn or error out a mistyped assignment, but
+we have to live with what we get.
+.PP
+Unfortunately, in Bash builtins, assigning a string value to
+an integer variable changes the variable type and sets the variable
+value to the string.
+It maintaining type safety is important, the C code will have to
+check the
+.B SHELL_VAR
+attributes and proceed with warning, error, or ignoring accodding
+to needs of the specific application.
+.SS INVISIBLE VARIABLES
+.PP
+Some situations will silently cause a C-code assignment to a variable
+to be silently ignored.
+.PP
+If a script
+.I declares
+a variable without assigning it a value, the variable will be flagged
+as
+.BR invisible ,
+using variable attribute
+.BR att_invisible .
+Values assigned to an invisible variable seem to be ignored.
+The simple solution is to remove the
+.B att_invisible
+flag before assigning:
+.IP
+.EX
+SHELL_VAR *svar = find_variable(variable_name);
+if (invisible_p(svar))
+   VUNSETATTR(svar, att_invisible);
+var_setvalue(svar, savestring(new_value));
+.EE
 .SH GENERIC VARIABLE
 .PP
 This is the variable type created when no options are specified
