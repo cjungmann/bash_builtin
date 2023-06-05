@@ -46,12 +46,18 @@ would be better to warn or error out a mistyped assignment, but
 we have to live with what we get.
 .PP
 Unfortunately, in Bash builtins, assigning a string value to
-an integer variable changes the variable type and sets the variable
-value to the string.
-It maintaining type safety is important, the C code will have to
+an integer variable sets the
+.B value
+struct member to the string value, but leaves the attributes value
+the same.  That is, the string assignment works, the value of the
+variable is the string value, despite the attributes indicating that
+the variable type is
+.BR integer .
+.PP
+If maintaining type safety is important, the C code will have to
 check the
 .B SHELL_VAR
-attributes and proceed with warning, error, or ignoring accodding
+attributes and proceed with warning, error, or ignoring according
 to needs of the specific application.
 .SS INVISIBLE VARIABLES
 .PP
