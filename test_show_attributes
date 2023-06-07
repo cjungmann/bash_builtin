@@ -9,14 +9,18 @@ bogus_test()
 
 run_test()
 {
+    local_func() { :; }
+
     local genericvar="generic"
     local -i intvar=1
     local -a arrvar=( 1 2 3 4 5 )
     local -A hashvar=( 1 "one" 2 "two" 3 "three" )
-    local -F funcvar=bogus_func
+    local funcvar=bogus_test
     local -a post_assign_arr
+    local -n nameref="arrvar"
+    local -n nameref_cmd="local_func"
 
-    declare post_assign_arr=( 5 4 3 2 1 )
+    post_assign_arr=( 5 4 3 2 1 )
 
     local -a args=(
         genericvar
@@ -26,6 +30,9 @@ run_test()
         funcvar
         post_assign_arr
         bogus_test
+        local_func
+        nameref
+        nameref_cmd
     )
 
     for arg in "${args[@]}"; do
