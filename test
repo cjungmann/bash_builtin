@@ -300,7 +300,7 @@ test_demo_collections()
     local -A map=( key1 value1 key2 value2 key3 value3 )
     local -n nameref="array"
 
-    # show_attributes "array" "map" "nameref" "enables" "test_func_callback" "func_callback"
+    show_attributes "array" "map" "nameref" "enables" "test_func_callback" "func_callback"
 
     # demo_collections "array"
     # echo "Upon return, array has ${#array[*]} elements.  They are:"
@@ -313,6 +313,19 @@ test_demo_collections()
     # demo_collections "nameref"
 }
 
+survey_attributes()
+{
+    local genericvar="generic"
+    local -i intvar=1
+    local -a arrvar=( 1 2 3 4 5 )
+    local -A hashvar=( 1 "one" 2 "two" 3 "three" )
+    local -F funcvar=bogus_func
+
+    arrvar=( 5 4 3 2 1 )
+
+    show_attributes "genericvar" "intvar" "arrvar" "hashvar" "funcvar"
+}
+
 # test_hellow
 # read -n1 -p Press\ a\ key\ to\ continue
 # test_walk_opts
@@ -322,5 +335,7 @@ test_demo_collections()
 # test_write_array
 # test_identify_name
 # test_func_callback
-test_func_callout
-# test_demo_collections
+# test_func_callout
+test_demo_collections
+
+survey_attributes
