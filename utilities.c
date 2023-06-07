@@ -1,10 +1,42 @@
+/**
+ * @file utilities.c
+ *
+ * The *bb* prefix of some functions refers to **b**ash **b**uiltin.
+ */
+
 #include <builtins.h>
 #include <shell.h>
 #include <builtins/bashgetopt.h>  // for internal_getopt(), etc
 #include <builtins/common.h>      // for no_options()
 
+#include <stdio.h>
 #include <stdarg.h>
 #include <errno.h>
+
+
+int bb_make_unique_name(char *buffer, int bufflen, const char *stem)
+{
+   int len = strlen(stem);
+   if (bufflen < len + 3)
+      return 0;
+
+   char **vars = all_variables_matching_prefix(stem);
+   char **ptr = vars;
+   int cur_val,  max_val = 0;
+   while (*ptr)
+   {
+      const char *str = *ptr;
+      cur_val = atoi(&str[len]);
+      if (cur_val > max_val)
+         max_val = cur_val;
+
+      ++ptr;
+   }
+
+   snprintf(buffer, bufflen, "%s_%02d", stem, max_val+1);
+   return 1;
+}
+
 
 void bb_free_word_list(WORD_LIST *wl)
 {
