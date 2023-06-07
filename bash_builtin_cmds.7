@@ -1,0 +1,68 @@
+.TH bash_builtin_cmds 7 "Miscellaneous Information Manual" 2023-05-18
+.SH NAME
+.B bash_builtin_cmds
+\- Useful Bash Functions for Builtin Development
+.SH DESCRIPTION
+.PP
+There is next to nothing available for writing Bash builtins.
+There are include files for developing builtins, and there are
+seemingly thousands of functions available.
+This manual covers a workable subset of what's available to provide
+a reference and a starting point for others who may want to explore.
+.SH VARIABLES
+.PP
+Variables are the foundation of communication between the shell
+environment and C or C++ code you might want to execute under
+Bash control.
+Bash utilizes several
+.B structs
+to manage different kinds of variables.
+Understanding how to create and use these variable types empowers the
+developer to built useful utilities.
+.SS INTERNAL VARIABLES
+.PP
+There are some data types that are not exposed to the Bash shell
+but are used internally to pass around information
+.TP
+.B WORD_LIST
+This is a singly-linked list containing character string values.
+They are mainly used to pass command arguments to builtin functions.
+.SS EXPOSED VARIABLES
+.PP
+These are variables that can be created and used in a shell environment
+or script.
+.TP
+.B array
+An array header points to a circular doubly-linked list of values
+.TP
+.B associate array
+Internally recognized as
+.BR HASH_TABLE .
+.SH DEBUGGING AND TRACING
+.PP
+Debugging is important, but for such an unknown and undocumented
+environment, tracing or stepping through code is also how to learn
+about how the environment works.
+.SS BUILDING TRACEABLE BASH
+.PP
+Download Bash source code from a daily-updated mirror
+.UR https://github.com/bminor/bash
+.UE .
+I enabled a debugging version by making changes in the
+.BR Makefile .
+After building the project, create a link to the
+.B Bash
+debugging executable in the builtin development directory.
+Using the link, a developer can run
+.BR GDB ,
+creating breakpoints in the development module or in
+.B Bash
+itself.
+.SS FOLLOWING BASH EXAMPLES
+.PP
+Set a breakpoint at function
+.BR open_shell_script ,
+which is defined in source file
+.BR shell.c .
+
+
