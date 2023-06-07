@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+enable -f./func_iface.so func_iface_callback
+
+callback_from_iface2()
+{
+    if [ "$#" -eq 0 ]; then
+        return 1
+    fi
+
+    local instance="$1"
+    func_iface_callback "$instance"
+    func_iface_callback "$instance" "gertrude"
+    func_iface_callback "$instance"
+}
+
+callback_from_iface()
+{
+    if [ "$#" -eq 0 ]; then
+        return 1
+    fi
+
+    local instance="$1"
+
+    # Nested func_iface initialized
+    func_iface -c callback_from_iface2
+
+    func_iface_callback "$instance"
+    func_iface_callback "$instance" "roger"
+    func_iface_callback "$instance"
+}
+
+cat <<EOF
+I'm really happy about this demo.  This module consists of two
+builtin functions, ${B}func_iface$X and ${B}func_iface_callback$X, that work
+together to create a situation where a ${B}func_iface$X initializes an
+environment and passes a handle to a script callback function, which
+uses the handle ${B}func_iface_callback$X to interact with the new
+environment.
+
+EOF
+
+func_iface -c callback_from_iface

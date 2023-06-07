@@ -1,0 +1,271 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+test_connection()
+{
+    cat <<EOF
+CONNECTION
+
+A CONNECTION struct is the means by which the Bash interpreter
+accesses consecutive statements.
+EOF
+
+    return 0
+
+    echo "This function, when dissected, will show how"
+    echo "Consecutive statements are linked through"
+    echo "instances of CONNECTION structs."
+}
+
+test_case_com()
+{
+    local -i retval="${1:-0}"
+
+    cat <<EOF
+CASE_COM
+
+The CASE_COM struct contains information to perform a Bash Case statement.
+EOF
+
+    return 0
+
+    case "$SHLVL" in
+        0 ) echo "Root level" ;;
+        1 ) echo "1 level deep" ;;
+        2 ) echo "2 levels deep" ;;
+        *) echo "Too deep" ;;
+    esac
+}
+
+test_for_com()
+{
+    cat <<EOF
+FOR_COM
+
+The FOR_COM struct contains information to perform a Bash for command
+There are two *for* loop models:
+
+1. Walk through a collection of values:
+   for val in "${array[@]}"
+
+2. C-language-style controlled loop:
+   for (( ndx=0; ndx<10; ++ndx ))
+
+EOF
+
+    return 0
+
+    local val
+    local -i count=0
+    for val in "$@"; do
+        printf "%2d: %s\n" $(( ++count ))  "$val"
+    done
+
+    for (( count=0; count<10; ++count )); do
+        printf "%2d\n" "$count"
+    done
+}
+
+test_arith_for_com()
+{
+    cat <<EOF
+ARITH_FOR_COM
+
+Although this is inherently tested in 'test_for_com', this
+explicitly targets the ARITH_FOR_COM command type.
+EOF
+    return 0
+
+    for (( count=0; count<10; ++count )); do
+        printf "%2d\n" "$count"
+    done
+}
+
+test_select_com()
+{
+    cat <<EOF
+SELECT_COM
+
+This unusual command produces a kind of selection dialog.
+EOF
+    return 0
+
+    local person
+    select person in jane robert olivia justin kayla robert; do
+        if [ -z "$person" ]; then
+            continue
+        fi
+
+        echo "You selected '$person'"
+        break
+    done
+}
+
+test_if_com()
+{
+    cat <<EOF
+IF_COM
+
+This struct contains a *test* command to determine if true or false,
+and commands for each outcome.
+EOF
+
+    return 0
+
+    if [ "$USER" == "root" ]; then
+        echo "You are running as 'root'"
+    else
+        echo "You are running as '$USER'"
+    fi
+}
+
+test_while_com()
+{
+    cat <<EOF
+WHILE_COM
+
+This struct contains a *test* command to determine if true or false,
+and a command to perform when the *test* returns TRUE
+EOF
+
+    return 0
+
+    local -i ndx=0
+    while [ "$ndx" -lt 10 ]; do
+        (( --ndx ))
+    done
+}
+
+test_arith_com()
+{
+    cat <<EOF
+ARITH_COM
+
+This struct is used for arithmetic statements.
+EOF
+
+    return 0
+
+    local -i left right
+    echo $(( right=10, left=right*10 ))
+}
+
+test_cond_com()
+{
+    cat <<EOF
+COND_COM
+
+This struct is part of a condition evaluation tree.  The generation
+if this struct is triggered with the [[ ]] notation.
+EOF
+
+    return 0
+
+   [[ "$USER" =~ rct ]]
+}
+
+test_simple_com()
+{
+    cat <<EOF
+SIMPLE_COM
+
+This structure mainly consists of a WORD_LIST that contains both the
+name of a command to run and the arguments to send to the command.
+EOF
+
+    return 0
+
+    printf $'\x1b[34;1m%s\x1b[m is the name, at shell level %d.\n' "$user" "$SHLVL"
+}
+
+test_function_def()
+{
+    cat <<EOF
+FUNCTION_DEF
+
+This command is generated for the body of a function.  It consists of a
+*name* member and an execution tree *command*.
+EOF
+
+    return 0
+
+    inner_func()
+    {
+        echo "Hello from the inner func."
+    }
+
+}
+
+test_group_com()
+{
+    cat <<EOF
+GROUP_COM
+
+A group is a set of statements contained by curly braces, and the
+GROUP_COM structure contains only a flag and a pointer to a *command*.
+EOF
+
+    return 0
+
+    {
+        echo "This is printout from an anonymous group."
+        echo "(Don't be alarmed!)"
+    }
+}
+
+test_subsell_com()
+{
+    cat <<EOF
+SUBSHELL_COM
+
+I haven't been able to trigger the creation of this type of command
+struct.
+EOF
+
+    return 1
+}
+
+test_coproc_com()
+{
+    cat <<EOF
+COPROC_COM
+
+I haven't been able to trigger the create of this type of command
+struct.
+EOF
+    return 1
+}
+
+
+
+
+read -n1 -p "Press a key to start tests."
+
+test_arith_com
+
+
+run_survey()
+{
+    local OIFS="$IFS"
+    local IFS=$'\n'
+    local -a funcs=( $( declare -F | grep -o test_[^[:space:]]\\+ ) )
+    IFS="$OIFS"
+
+    local test
+    for test in "${funcs[@]}"; do
+        echo -n $'\e[2J\e[1;1H'
+        if "$test"; then
+            func_dissect "$test"
+        fi
+
+        echo
+        read -n1 -p "Press 'q' to quit, any other key to continue."
+        if [ "$REPLY" == 'q' ]; then
+            break;
+        fi
+    done
+}
+
+
+run_survey
