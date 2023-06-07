@@ -6,11 +6,9 @@ declare B=$'\e[34;1m'
 declare I=$'\e[33;1m'
 declare X=$'\e[m'
 
-
-bi_enable()
+x_enable()
 {
-    # extract builtin name from script name:
-    local biname="${0#*_}"
+    local biname="$1"
     local biname_so="./${biname}.so"
 
     if [ -x "$biname_so" ]; then
@@ -21,4 +19,9 @@ bi_enable()
     fi
 }
 
+
+bi_enable()
+{
+    x_enable "${0#*_}"
+}
 
