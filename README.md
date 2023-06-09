@@ -99,6 +99,6 @@ that I may want to find again.
 
 
 
-[bash_git]:      "https://github.com/gitGNU/gnu_bash"
-[simple_example] "https://github.com/satoru-takeuchi/bash-builtin-example"
-[bash_mirror]:   "https://github.com/bminor/bash.git
+[bash_git]:       "https://github.com/gitGNU/gnu_bash"
+[simple_example]: "https://github.com/satoru-takeuchi/bash-builtin-example"
+[bash_mirror]:    "https://github.com/bminor/bash.git
