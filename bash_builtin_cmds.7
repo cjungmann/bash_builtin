@@ -45,19 +45,49 @@ environment, tracing or stepping through code is also how to learn
 about how the environment works.
 .SS BUILDING TRACEABLE BASH
 .PP
-Download Bash source code from a daily-updated mirror
-.UR https://github.com/bminor/bash
+Debugging your shiny new Bash builtin will be easier if you
+can step through your code and, perhaps more usefully, Bash's
+source code.  The following instructions how to download and
+make a debug version of Bash:
+.PP
+Download the latest official Bash source code from
+.UR https://git.savannah.gnu.org/git/bash.git
 .UE .
-I enabled a debugging version by making changes in the
-.BR Makefile .
-After building the project, create a link to the
-.B Bash
-debugging executable in the builtin development directory.
-Using the link, a developer can run
-.BR GDB ,
-creating breakpoints in the development module or in
-.B Bash
-itself.
+Then drop into the directory and call the
+.B configure
+command with options
+.BR CPPFLAGS='-DDEBUG' " and " CFLAGS='-g\ -O0' .
+.IP
+.EX
+git clone https://git.savannah.gnu.org/git/bash.git
+cd bash
+configure CPPFLAGS='-DDEBUG' CFLAGS='-g -O0'
+make
+.EE
+.PP
+In my development environment, I did not install the debug Bash
+version but rather made links to the source directory and the
+executable in my Bash builtin development directorys.
+Assuming one's projects are in
+.I ~/work
+directory and gits are in
+.IR ~/gits ,
+The following commands will make the appropriate links:
+.IP
+.EX
+cd ~/work/bash_builtins
+ln -s ~/gits/bash bash_src
+cp -s bash_src/bash .
+.EE
+.PP
+Then you can debug your Bash builtin by invoking
+.B gdb
+starting Bash running a script that enables and uses your
+Bash builtin:
+.IP
+.EX
+gdb --tui --args ./bash testscript
+.EE
 .SS FOLLOWING BASH EXAMPLES
 .PP
 Set a breakpoint at function
