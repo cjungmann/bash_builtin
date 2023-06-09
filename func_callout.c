@@ -1,5 +1,7 @@
 #include <builtins.h>
 #include <command.h>              // for COMMAND.flags, among other things
+#ifndef EXECUTION_FAILURE
+#endif
 #include <shell.h>
 #include <builtins/bashgetopt.h>  // for internal_getopt(), etc.
 #include <builtins/common.h>      // for no_options()

@@ -9,7 +9,9 @@
  ***/
 
 #include <builtins.h>
+#ifndef EXECUTION_FAILURE
 #include <shell.h>
+#endif
 #include <builtins/bashgetopt.h>  // for internal_getopt(), etc
 #include <builtins/common.h>      // for no_options()
 
@@ -18,6 +20,8 @@
 
 #include <stdarg.h>
 #include "word_list_stack.h"
+
+// Prototype of undocumented Bash command
 extern int execute_command PARAMS((COMMAND *));
 
 int bb_make_unique_name(char *buffer, int bufflen, const char *stem)
