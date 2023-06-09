@@ -13,7 +13,8 @@ LFLAGS += --shared
 
 # Build module list (info make -> "Functions" -> "File Name Functions")
 MODULES = $(addsuffix .o,$(basename $(wildcard $(SRC)/*.c)))
-BUILTINS = $(addsuffix .so,$(basename $(wildcard $(SRC)/*.c)))
+ROOTS = $(filter-out ./utilities, $(basename $(wildcard $(SRC)/*.c)))
+BUILTINS = $(addsuffix .so, $(ROOTS))
 
 # Libraries need header files.  Set the following accordingly:
 HEADERS =
@@ -29,21 +30,8 @@ all: $(BUILTINS)
 %o : %c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-# For executable target:
-# install:
-# 	install -D -mode=775 $(TARGET) $(PREFIX)/bin
-
-# For shared library targets:
-# install:
-# 	install -D --mode=644 $(HEADERS) $(PREFIX)/include
-# 	install -D --mode=775 $(TARGET) $(PREFIX)/lib
-# 	ldconfig $(PREFIX)/lib
-
-# Remove the ones you don't need:
-uninstall:
-	rm -f $(PREFIX)/bin/$(TARGET)
-	rm -f $(PREFIX)/lib/$(TARGET)
-	rm -f $(PREFIX)/include/$(HEADERS)
+test:
+	@echo $(BUILTINS)
 
 clean:
 	rm -f *.so
@@ -52,7 +40,5 @@ clean:
 help:
 	@echo "Makefile options:"
 	@echo
-	@echo "  install    to install project"
-	@echo "  uninstall  to uninstall project"
 	@echo "  clean      to remove generated files"
 	@echo "  help       this display"
