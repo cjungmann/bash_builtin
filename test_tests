@@ -13,6 +13,8 @@ declare -a my_builtins=(
     func_callback
     func_callout
     show_attributes
+    func_dissect
+    func_iface
 )
 
 declare -i count="${#my_builtins[*]}"
