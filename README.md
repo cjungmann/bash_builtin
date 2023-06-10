@@ -1,104 +1,132 @@
-# PROJECT BASH_BUILTIN
+# Bash Builtins Project
 
-I wonder what you can do with a custom **Bash** builtin function
-written in C.  Will it run in the same process as the main **Bash**
-thread?  Can the custom builtin access other **Bash** builtins?
-And most importantly for my purposes, can the custom **Bash**
-builtin access script-based functions?
+This project was started as an archive of coding experiments.  The
+first experiments were exercises in understanding how to setup and
+build Bash builtins.  More recent programs are about transferring
+control back-and-forth between Bash script code and the C-language
+builtin code.
 
-## Using in Bash
+## Exploring the Project
 
-Including a shared-object library for use in **Bash** entails
-the use of the **enable** function.  Search the **Bash** manpage
-for *^ *enable [*. to jump to the documentation for the
-**enable** function.
+Simply clone the project and run `make`.  The Makefile will
+generate several _shared object_ libraries (ie compiled object
+files with an `.so` extension).
 
-## Planning For Development
+Each Bash builtin library has a corresponding Bash script whose
+name is derived from the C source file, adding a `test_` prefix
+and discarding the `.c` extension.
 
-It's not so hard to setup a function to be available as a
-builtin, you define the function, an array of strings for a long
-description, then populate a **struct builtin** instance.
+There is a Bash script, `test_tests`, that cycles through all of
+the individual test scripts.  The order of the test of tests is
+roughly the order of development, so the more basic tests come
+first, and more advanced or experimental things come later.
 
-Reading the parameters is the first real hurdle I found.  As I
-work it out, I'm recording my thoughts and discoveries.
+## What I Hoped to Accomplish
 
-### Argument Handling
+- Design commands that run in the same process as the script.
+  Returning values in nameref variables is 10x faster than
+  starting a child process and reading stdout.
 
-Assuming there are arguments to the builtin, there are a few
-argument types to consider
+- Deliver a more _black-box_ utility compared with some
+  Bash frameworks, especially like my work in [bash_patterns][bash_patterns].
 
-1. **Flag options** have no values, but only set a flag.
-   Take the *-r* **grep** options for recursive search
+- To be able to create C language objects whose lifetimes can
+  endure and can be managed through Bash script functions.
 
-2. **Value options** are followed by a value, that is, a value
-   option usually consists of two arguments.  (It can be a
-   single argument if the space between the option and the value
-   is omitted.)  Think **-e** *PATTERN* in **grep**.
+## List of Builtins
 
-3. Value arguments that are not options.  For example, the
-   filename after **rm** *filename* is not an option, but a
-   value.
+- **hellow.c**  
+  My first builtin simply says "hello" and, crucially for starting
+  out: confirms that the builtin is in the same process as the
+  script that calls it, otherwise my potential builtins would forfeit
+  and C performance benefits to the sub process penalty.
 
-### internal_getopt Concepts
+- **walk_opts** and **walk_args**  
+  contain my first efforts at reading the command line arguments
+  passed to the builtin command.
 
-This is not exhaustive, but is another record of questions and
-discoveries.
+- **nameref_arg**  
+  Simple confirmation that a variable can be accessed through
+  its name, and that changes to the name-accessed variable are
+  visible to the calling script when the builtin terminates.
 
-### internal_getopt Arguments
+- **demo_collections**  
+  Practice filling arrays and associative arrays with content
+  that the calling script can access upon return. This source
+  file also includes some code for printing an integer in any
+  number base from 2 to 63.
 
-internal_getopt() collects the command options out of the list
-of arguments.  It only returns options, a separate pass through
-the **WORD_LIST** can retrieve string arguments.
+- **read_array**  
+  Practice conventions for processing elements of a Bash array.
 
-1. The first argument is a pointer to the **WORD_LIST** struct
-   from which the arguments are read.
+- **write_array**  
+  Confirming that a command can change elements of an array
+  passed to the builtin, and the new values will be visible
+  in the Bash script when the builtin finishes.
 
-2. The second argument is a list of recognized option letters.
-   If the letter is followed by a colon, the option takes an argument,
-   if the letter is followed by another letter instead, the option
-   is a flag.
+- **identify_name**  
+  This is not so useful.  It was my first attempt at a builtin
+  reporting the details of a named variable.  See the
+  `show_attributes` builtin below.
 
-### Collecting String Arguments
+- **func_callback**  
+  Confirmation that a builtin command can invoke a Bash script
+  function.
 
-Look at walk_args.c for an example collecting string arguments.
+- **func_callout**
+  Another exercise in invoking a callback script function.
+  This early attempt is more complicated and verbose than necessary,
+  as later efforts will show.
 
-## References
+- **show_attributes**  
+  Given the name of a variable, this builtin prints a human-readable
+  accounting of the variable's attributes.  Created primarily as a
+  debugging tool for builtin development.
 
-I haven't written any code yet, but I am collecting what I hope is
-useful information.  The links below are a record of places visited
-that I may want to find again.
+- **func_dissect**  
+  This builtin prints a not-very-sophisticated command tree of
+  the function whose name is passed to the builtin.  I wrote this
+  program to dig a bit into the anatomy of Bash functions so I
+  can better understand how I might create a function I could
+  return to a script for that script to call back into the
+  builtin.
 
-- This [mirror of Bash source code][bash_mirror] is the best thing
-  I've found (so far) from which I can see enough examples to figure
-  out what's going on.  I cloned it and looked in the
-  `bash/examples/loadables` directory and poked around in the source
-  files for some of the standard builtin functions.
+- **func_iface**  
+  The name is a bit misleading.  This builtin implements a very
+  simple handle object by exploiting the rarely if ever used
+  `att_special` attribute and casting the interface to `char*`
+  fot the SHELL_VAR::value member.  Since Bash expect the `value`
+  member to be a simple memory string, this builtin disposes of
+  the interface and sets `value` to NULL so Bash leaves it alone.
 
-  Under the cloned **bash** directory, the following files are of
-  particular interest:
+## Other Interesting Files
 
-  - **bash/builtins/common.h** consolidates the contents of several
-    C source files.
+There are a few other files that may be useful:
 
-  -  **bash/variables.h** and **bash/variables.c** will help the
-     developer understand access to script variables.
+- **utilities.c**  
+  A non-builtin C source file that includes a few functions that
+  were useful to more than one other builtin.  As I gain experience
+  developing builtins, I wanted to isolate the builtin basics from
+  implementation details, thus this file was created.
 
-  - **bash/examples/loadables/asortr.c** is an example of working with
-    arrays, both regular and associative, particularly in function
-    sort_index.
+- **word_list_stack.h**  
+  What a lame name.  With object lifetimes limited to the life of
+  the builtin function, I thought it would be interesting to use
+  stack memory to build argument WORD_LISTs.  Without reliable
+  inline functions, this requires some tricky macro work, but it
+  was fun to do and useful.
 
-- **/usr/include/bash** contains several header files that appear to
-  be designed for custom **Bash** builtins.
+- **FNANE.c.template**  
+  This template file is a boilerplate source file to start a
+  new builtin command.  It's not perfect, I will probably update
+  it sometime.  Use your editor's search-and-replace utility to
+  change `<FNAME>` to your builtin function name.
 
-- [Bash GitHub Page][bash_git] may include source code for the
-  standard builtins that can demonstrate implementation details we
-  might need for our own builtins.
+- **bash_breakpoints.7**, **bash_builtin.7**, and **bash_variables.7**
+  These rudimentary man files are mostly aborted attempts to
+  document what I'm learning with this project.  I got impatient
+  with trying to write everything I was learning, especially as what
+  I was doing got more complicated.
 
-- This [simple example][simple_example] my be the minimalist example
-  needed for a boilerplate builtin project.
-
-
-
-[bash_git]:       "https://github.com/gitGNU/gnu_bash"
-[simple_example]: "https://github.com/satoru-takeuchi/bash-builtin-example"
-[bash_mirror]:    "https://github.com/bminor/bash.git
+[bash_patterns]:   "https://github.com/cjungmann/bash_patterns"
+[bash_source]:     "https://git.savannah.gnu.org/git/bash"
