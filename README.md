@@ -41,49 +41,49 @@ first, and more advanced or experimental things come later.
   script that calls it, otherwise my potential builtins would forfeit
   and C performance benefits to the sub process penalty.
 
-- **walk_opts** and **walk_args**  
+- **walk_opts.c** and **walk_args.c**  
   contain my first efforts at reading the command line arguments
   passed to the builtin command.
 
-- **nameref_arg**  
+- **nameref_arg.c**  
   Simple confirmation that a variable can be accessed through
   its name, and that changes to the name-accessed variable are
   visible to the calling script when the builtin terminates.
 
-- **demo_collections**  
+- **demo_collections.c**  
   Practice filling arrays and associative arrays with content
   that the calling script can access upon return. This source
   file also includes some code for printing an integer in any
   number base from 2 to 63.
 
-- **read_array**  
+- **read_array.c**  
   Practice conventions for processing elements of a Bash array.
 
-- **write_array**  
+- **write_array.c**  
   Confirming that a command can change elements of an array
   passed to the builtin, and the new values will be visible
   in the Bash script when the builtin finishes.
 
-- **identify_name**  
+- **identify_name.c**  
   This is not so useful.  It was my first attempt at a builtin
   reporting the details of a named variable.  See the
   `show_attributes` builtin below.
 
-- **func_callback**  
+- **func_callback.c**  
   Confirmation that a builtin command can invoke a Bash script
   function.
 
-- **func_callout**
+- **func_callout.c**
   Another exercise in invoking a callback script function.
   This early attempt is more complicated and verbose than necessary,
   as later efforts will show.
 
-- **show_attributes**  
+- **show_attributes.c**  
   Given the name of a variable, this builtin prints a human-readable
   accounting of the variable's attributes.  Created primarily as a
   debugging tool for builtin development.
 
-- **func_dissect**  
+- **func_dissect.c**  
   This builtin prints a not-very-sophisticated command tree of
   the function whose name is passed to the builtin.  I wrote this
   program to dig a bit into the anatomy of Bash functions so I
@@ -91,7 +91,7 @@ first, and more advanced or experimental things come later.
   return to a script for that script to call back into the
   builtin.
 
-- **func_iface**  
+- **func_iface.c**  
   The name is a bit misleading.  This builtin implements a very
   simple handle object by exploiting the rarely if ever used
   `att_special` attribute and casting the interface to `char*`
