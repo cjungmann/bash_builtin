@@ -92,12 +92,17 @@ first, and more advanced or experimental things come later.
   builtin.
 
 - **func_iface.c**  
-  The name is a bit misleading.  This builtin implements a very
-  simple handle object by exploiting the rarely if ever used
-  `att_special` attribute and casting the interface to `char*`
-  fot the SHELL_VAR::value member.  Since Bash expect the `value`
-  member to be a simple memory string, this builtin disposes of
-  the interface and sets `value` to NULL so Bash leaves it alone.
+  The name is a bit misleading.  This builtin implements a handle
+  that can be returned to the calling script to be used to call
+  back into the builtin from Bash functions.  As a proof of concept,
+  the handle is very simple, with just barely enough utility to
+  prove that the Bash script can manipulate a suspended builtin
+  object.  The handle object is created by exploiting the rarely if
+  ever used `att_special` attribute and casting the interface to
+  `char*` and saving it to the SHELL_VAR::value member.  Since Bash
+  expects the `value` member to be a simple memory string, this
+  builtin disposes of the interface and sets `value` to NULL so Bash
+  leaves it alone.
 
 ## Other Interesting Files
 
