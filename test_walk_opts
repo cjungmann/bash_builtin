@@ -19,4 +19,13 @@ Calling:
 ${B}walk_opts${X} ${I}-a -b${X}
 EOF
 
-walk_opts -a -b
+walk_opts -a -b -d bogus -e 10
+
+cat <<EOF
+
+The previous options were all well-formed.  Let's try some things
+that may trip ip the getopt() function, like omitting the space
+between the -d and its value, and also like passing a string to
+number option -e:
+EOF
+walk_opts -dbogus -e bozo
