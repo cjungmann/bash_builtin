@@ -1,0 +1,89 @@
+.TH internal_getopt 3 "Bash Builtin Function"
+.SH NAME
+.B internal_getopt
+\- option-collecting function for Bash builtin development
+.SH SYNOPSIS
+.PP
+.EX
+.B #include <builtins.h>
+.B #ifndef EXECUTION_FAILURE
+.B #include <shell.h>
+.B #endif
+.B #include <builtins/bashgetopt.h>
+.B #include <builtins/common.h>
+
+.B int internal_getopt \c
+.RB ( "WORD_LIST* " \c
+.IR list ", " \c
+.BI "char* " opts "\fR);\fP"
+.EE
+.SH DESCRIPTION
+.PP
+The function
+.B internal_getopt
+uses the template string
+.I opts
+to interpret the command line arguments included in the
+.I list
+argument.
+.SH OPERANDS
+.TP
+.I list
+A
+.B WORD_LIST
+singly-linked list of shell command arguments.
+.B internal_getopt
+will walk through the arguments over a series of calls, returning
+the option letter if matched and the value is acceptable.
+.TP
+.I opts
+A string identifying the recognized option letters and how to
+interpret them.
+.RS
+
+.RE
+
+.SH EXAMPLE
+.PP
+.EX
+static int my_builtin(WORD_LIST *list)
+{
+   reset_internal_getopt();
+
+   int a_flag = 0;
+   const char *b_string = NULL:
+   int c_int = 0;
+   const char *d_string = \(dqdefault\(dq;
+
+
+   int opt;
+   while ((opt = internal_getopt(list, \(dqab:c#d;\(dq)) != -1)
+   {
+      switch(opt)
+      {
+         case 'a':
+            a_flag = 1;
+            break;
+         case 'b':
+            b_string = list_optarg;
+            break;
+         case 'c':
+            c_int = atoi(list_optarg);
+            break;
+         case 'd':
+            if (list_optarg)
+               d_string = list_optarg;
+            else
+               d_string = \(dqinvoked_but_no_value\(dq;
+            break;
+         case '?':
+            // non-recoverable error, warning already issued.
+            // _break_ statement insufficient response because
+            // we must break the _case_ and the _while_.
+            goto bad_value_exit;
+      }
+   }
+
+   bad_value_exit:
+}
+.ee
