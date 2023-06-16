@@ -133,5 +133,6 @@ There are a few other files that may be useful:
   with trying to write everything I was learning, especially as what
   I was doing got more complicated.
 
-[bash_patterns]:   "https://github.com/cjungmann/bash_patterns"
-[bash_source]:     "https://git.savannah.gnu.org/git/bash"
+[bash_patterns]:     "https://github.com/cjungmann/bash_patterns"
+[bash_source_page]:  "http://git.savannah.gnu.org/cgit/bash.git"
+[bash_clone_url]:    "https://git.savannah.gnu.org/git/bash"
