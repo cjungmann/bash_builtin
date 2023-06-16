@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+source mod_common
+bi_enable
+
+perform_test()
+{
+    local -a args=()
+    local -i title_done=0
+    local arg
+    for arg in "$@"; do
+        if [ "$title_done" -eq 0 ]; then
+            if [ "$arg" == "@@" ]; then
+                title_done=1
+            else
+                echo "$arg"
+            fi
+        else
+            args+=( $arg )
+        fi
+    done
+
+    echo
+    echo "About to call: ${B}func_internal_getopt ${args[*]}${X}"
+    echo
+    echo "The result is: "
+
+    func_internal_getopt "${args[@]}"
+}
+
+readarray -t test_args << EOF
+Simple test to see result of no options being set:
+@@
+--
+Simple test using all options appropriately:
+@@
+-a
+-b simple
+-c 10
+-d optional
+--
+Variation: optional value option invoked without a value:
+@@
+-d
+--
+Second optional value option, option invoked without a value,
+followed by another option.  The '-c' that follows '-d' should
+NOT BE recognized as a value.
+@@
+-d
+-c 10
+--
+GENERATES ERROR: An option value or positional argument that
+looks like an option (starts with '-'), but is not recognized as
+an option defined in the _opts_ parameter of the internal_getopt
+function.
+@@
+-great
+--
+ACCEPTABLE OPTION-LIKE, NON-OPTION VALUES:
+1) '-' prefixed value enclosed in quotes
+2) a negative number value
+@@
+-b "-great"
+-c -25
+--
+GENERATES ERROR: Attempting to set a string value to a number option:
+@@
+-c ten
+--
+GENERATES ERROR: Using a value-seeking option with no value:
+@@
+-b
+EOF
+
+
+#### EXECUTION BEGINS HERE
+
+clear_scr
+
+cat <<EOF
+DEMONSTRATE BUILTIN FUNCTION func_internal_getopt
+=================================================
+
+The packaged *internal_getopt* function is not documented anywhere,
+and futher, examples do not demonstrate two useful option decorations.
+This script and associated builtin thus combine to
+1. demonstrate the proper use of the *internal_getopt* function
+2. experiment with unexpected '#' (number) and ':' (optional)
+   decorations
+3. (instruct|exhibit|reveal) how to process successful option
+   settings for each option decoration
+4. show how *internal_getopt* reports improper input and exhibit
+   how the developer should respond.
+
+All tests will be performed against a *getopt* string of:
+  "ab;c#d:"
+which means
+  - Option 'a' is a flag that is  matched without an option value
+  - Option 'b' matches with an option value.
+  - Option 'c' matches with a number (integer) value AND
+               reports inappropriate (non-number) values.
+  - Option 'd' is an optional value option, meaning its
+               invocation is reported with or without a
+               option value.
+EOF
+
+read -n1 -p "Press any key to begin tests."
+clear_scr
+
+declare arg
+declare -a func_args
+for arg in "${test_args[@]}"; do
+    if [ "$arg" == "--" ]; then
+        perform_test "${func_args[@]}"
+        func_args=()
+        echo
+        read -n1 -p "Press any key for next test."
+        clear_scr
+    else
+        func_args+=( "$arg" )
+    fi
+done
+
+if [ "${#func_args[*]}" -gt 0 ]; then
+    perform_test "${func_args[@]}"
+fi
+
+
+
+
