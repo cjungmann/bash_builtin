@@ -6,6 +6,8 @@ declare B=$'\e[34;1m'
 declare I=$'\e[33;1m'
 declare X=$'\e[m'
 
+clear_scr() { echo $'\e[2J\e[1;1;H'; }
+
 x_enable()
 {
     local biname="$1"
