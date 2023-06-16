@@ -31,7 +31,8 @@ argument.
 .I list
 A
 .B WORD_LIST
-singly-linked list of shell command arguments.
+singly-linked list of string containers representing the command line
+arguments used to call the builtin function.
 .B internal_getopt
 will walk through the arguments over a series of calls, returning
 the option letter if matched and the value is acceptable.
@@ -40,21 +41,69 @@ the option letter if matched and the value is acceptable.
 A string identifying the recognized option letters and how to
 interpret them.
 .RS
-
+.PP
+The
+.I opts
+string consists of the letters that should be matched as options,
+each of which may be followed by a decorator character indicating
+how to process the option.
+.TP
+.B no decorator
+indicates that the option should be recognized, but that no additional
+arguments will be consumed.
+.TP
+.B :
+indicates the option takes a value by consuming the next
+command line argument.
+The variable
+.B list_optarg
+points to the option's value.
+An error will be reported if the user includes this option where there
+is no following command line argument
+.TP
+.B #
+indicates that the option value must be a number.  An error will be
+reported if the user omits the number value or if the next command
+line argument is not a number.
+.TP
+.B ;
+indicates an option that may or may not be followed by a value.
+If a command line argument follows the option, the following argument
+will be returned as a value if it doesn't look like another option.
 .RE
+.SH RETURN VALUE
+.PP
+An integer value representing a
+.B char
+value will be returned for each call of
+.BR internal_getopt .
+For successful matches, the return value matches one of the letters
+in the
+.I opts
+string.
+.PP
+An error caused by a missing argument or an non-number argument
+following a number option will return a
+.RB \(dq ? \(dq.
+There should be no further calls to the
+.B internal_getopt
+function after receiving a
+.RB \(dq ? \(dq.
+
 
 .SH EXAMPLE
 .PP
 .EX
 static int my_builtin(WORD_LIST *list)
 {
+   int retval = EXECUTION_FAILURE;
+
    reset_internal_getopt();
 
    int a_flag = 0;
    const char *b_string = NULL:
    int c_int = 0;
    const char *d_string = \(dqdefault\(dq;
-
 
    int opt;
    while ((opt = internal_getopt(list, \(dqab:c#d;\(dq)) != -1)
@@ -84,6 +133,9 @@ static int my_builtin(WORD_LIST *list)
       }
    }
 
-   bad_value_exit:
+   retval = use_the_argument(a_flag, b_string, c_int, d_string);
+
+  bad_value_exit:
+   return retval;
 }
-.ee
+.EE
