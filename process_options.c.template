@@ -1,0 +1,118 @@
+// -*- mode:c -*-
+
+/*
+ * Use this Bash builtin template for more control over the
+ * options than afforded by _internal_getopts_.  This version
+ * does not automatically handle number options, but it would
+ * not be hard to add that feature.
+ *
+ */
+
+#include <builtins.h>
+
+// Prevent multiple inclusion of shell.h:
+#ifndef EXECUTION_FAILURE
+#include <shell.h>
+#endif
+
+#include <builtins/bashgetopt.h>  // for internal_getopt(), etc
+#include <builtins/common.h>      // for no_options()
+
+#include <stdio.h>
+
+static int <FNAME>(WORD_LIST *list)
+{
+   int retval = EXECUTION_SUCCESS;
+
+   // String pointers that can be set with options.
+   // Set to default values where appropriate.
+   const char *name_handle = NULL;
+   const char *name_action = NULL;
+   const char *name_result_value = "ATE_VALUE";
+   const char *name_result_array = "ATE_ARRAY";
+   int flag_verbose = 0;
+
+   // Option parsing status variables
+   const char *cur_arg;
+   const char **pending_option = NULL;
+
+   WORD_LIST *ptr = list;
+   while (ptr)
+   {
+      cur_arg = ptr->word->word;
+      if (pending_option)
+      {
+         *pending_option = cur_arg;
+         pending_option = NULL;
+      }
+      else if (*cur_arg == '-' && cur_arg[1])
+      {
+         switch(cur_arg[1])
+         {
+            case 'a':
+               // Immediate resolution when no space between option and value:
+               if (cur_arg[2])
+                  name_result_array = &cur_arg[2];
+               // Defer getting option value until next loop:
+               else
+                  pending_option = &name_result_array;
+               break;
+
+            case 'v':
+               if (cur_arg[2])
+                  name_result_value = &cur_arg[2];
+               else
+                  pending_option = &name_result_value;
+               break;
+
+            case 'V':
+               flag_verbose = 1;
+               break;
+         }
+      }
+      // Positional options
+      else if (name_handle == NULL)
+         name_handle = cur_arg;
+      else if (name_action == NULL)
+         name_action = cur_arg;
+
+      ptr = ptr->next;
+   }
+
+   if (name_handle == NULL || name_action == NULL)
+   {
+      fprintf(stderr, "handle and action values are required.\n");
+      retval = EX_BADUSAGE;
+      goto exit_for_error;
+   }
+
+   printf("Variable name_handle is set to '%s'\n", name_handle);
+   printf("Variable name_action is set to '%s'\n", name_action);
+   printf("Variable name_result_value is set to '%s'\n", name_result_value);
+   printf("Variable name_result_array is set to '%s'\n", name_result_array);
+
+  exit_for_error:
+   return retval;
+}
+
+static char *desc_ate[] = {
+   "<FNAME> is a cool Bash builtin",
+   "",
+   "Options:",
+   "  -a  array   Use _array_ as the name of array to be used for",
+   "              returning multi-value results when appropriate",
+   "              for the action type.",
+   "  -v value    Use _value_ as the name of the shell variable to",
+   "              be used for return single value results when",
+   "              appropriate for the action type.",
+   (char*)NULL     // end of array marker
+};
+
+struct builtin ate_struct = {
+   .name      = "<FNAME>",
+   .function  = <FNAME>,
+   .flags     = BUILTIN_ENABLED,
+   .long_doc  = desc_<FNAME>,
+   .short_doc = "<FNAME> [-a array_name] [-v value_name] handle_name action_name [...]",
+   .handle    = 0
+};
