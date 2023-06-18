@@ -81,7 +81,8 @@ static int <FNAME>(WORD_LIST *list)
 
    if (name_handle == NULL || name_action == NULL)
    {
-      fprintf(stderr, "handle and action values are required.\n");
+      fprintf(stderr, "Handle and action values are required.\n");
+      builtin_usage();
       retval = EX_BADUSAGE;
       goto exit_for_error;
    }
