@@ -5,6 +5,7 @@
 # everything else is generated from this value.
 TARGET = ate.so
 
+# Used to generate and install the enable_*cmd* script:
 BUILTIN = $(basename $(TARGET))
 ENABLER = $(addprefix enable_,$(BUILTIN))
 
