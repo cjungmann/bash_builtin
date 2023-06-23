@@ -127,6 +127,20 @@ There are a few other files that may be useful:
   it sometime.  Use your editor's search-and-replace utility to
   change `<FNAME>` to your builtin function name.
 
+- **Makefile.template**  
+  This Makefile template will compile all `.c` files into a Bash
+  builtin `.so` file.  The `install` target installs the `.so` script
+  to `$(PREFIX)/lib` and generates an enabler script that helps enable
+  the builtin and installs the enabler script to `$(PREFIX)/bin`.
+
+  Using the enabler script, a script needing the builtin can enable
+  the builtin with:
+  ~~~sh
+  enable $( enable_ate )
+  ~~~
+  where the _ate_ part of `enable_ate` would be replaced with the
+  root of the $(TARGET) filename variable in the Makefile.
+
 - **bash_breakpoints.7**, **bash_builtin.7**, and **bash_variables.7**
   These rudimentary man files are mostly aborted attempts to
   document what I'm learning with this project.  I got impatient
