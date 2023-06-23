@@ -1,5 +1,12 @@
-# Update this with the target shared-object Bash builtin file:
+# -*- mode: makefile -*-
+# ^^^ because .template extension won't set makefile mode
+
+# Change the target according to your project;
+# everything else is generated from this value.
 TARGET = ate.so
+
+BUILTIN = $(basename $(TARGET))
+ENABLER = $(addprefix enable_,$(BUILTIN))
 
 PREFIX ?= /usr/local
 
@@ -16,13 +23,8 @@ LFLAGS += --shared
 
 CFLAGS += -I/usr/include/bash -I/usr/include/bash/include
 
-# Build module list (info make -> "Functions" -> "File Name Functions")
 MODULES = $(addsuffix .o,$(basename $(wildcard $(SRC)/*.c)))
 
-# Libraries need header files.  Set the following accordingly:
-HEADERS =
-
-# Declare non-filename targets
 .PHONY: all install uninstall clean help
 
 all: $(TARGET)
@@ -30,23 +32,24 @@ all: $(TARGET)
 $(TARGET) : $(MODULES)
 	$(CC) $(LFLAGS) -o $@ $(MODULES) $(LDFLAGS)
 
+$(ENABLER):
+	@echo "#!/usr/bin/env bash"                         > $(ENABLER)
+	@echo "echo -f $(PREFIX)/lib/$(TARGET) $(BUILTIN)" >> $(ENABLER)
+
 %o : %c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-For shared library targets:
-install:
-	install -D --mode=644 $(HEADERS) $(PREFIX)/include
+install: $(ENABLER)
+	install -D --mode=775 $(ENABLER) $(PREFIX)/bin
 	install -D --mode=775 $(TARGET) $(PREFIX)/lib
-	ldconfig $(PREFIX)/lib
 
-# Remove the ones you don't need:
 uninstall:
-	rm -f $(PREFIX)/bin/$(TARGET)
+	rm -f $(PREFIX)/bin/$(ENABLER)
 	rm -f $(PREFIX)/lib/$(TARGET)
-	rm -f $(PREFIX)/include/$(HEADERS)
 
 clean:
 	rm -f $(TARGET)
+	rm -f $(ENABLER)
 	rm -f $(MODULES)
 
 help:
