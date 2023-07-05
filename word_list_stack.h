@@ -11,7 +11,7 @@
 
 
 /**
- * @defgroup WLE_Group WORD_LINK Creation Macros
+ * @defgroup WORD_LIST_macros
  *
  * @brief Set of macros for creating or extending a WORD_LIST in
  *        stack memory.
