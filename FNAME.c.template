@@ -95,3 +95,22 @@ struct builtin <FNAME>_struct = {
    .short_doc = "<FNAME> is cool",
    .handle    = 0
 };
+
+
+// Opportunity to modfy <FNAME>_struct members (or any other
+// global variable or setting) before releasing
+// the builtin for use.
+//
+// In particular, this has been used to generate a .long_doc
+// array from code in the builtin executable.
+int <FNAME>_builtin_load(char *name)
+{
+   return 1;
+}
+
+// If <FBNAME>_builtin_load() allocated heap memory, this is
+// the opportunity to free it.
+void <FNAME>_builtin_unload(char *name)
+{
+   ;
+}
