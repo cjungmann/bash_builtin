@@ -1,6 +1,11 @@
 /**
  * @file word_list_stack.h
  * @brief Macros to create or augment WORD_LISTs in stack memory
+ *
+ * This set of macros allows the developer to quickly create an
+ * arbitrary WORD_LIST in stack memory.
+ *
+ * @ref WORD_LIST_Macros
  */
 
 #ifndef WORD_LIST_STACK_H
@@ -11,7 +16,7 @@
 
 
 /**
- * @defgroup WORD_LIST_macros
+ * @defgroup WORD_LIST_Macros Macros for Stack-based WORD_LIST
  *
  * @brief Set of macros for creating or extending a WORD_LIST in
  *        stack memory.
@@ -182,7 +187,7 @@ while(*(ARREL)) {                  \
  */
 
 /**
- * @page WLE_Intro WLE Intro
+ * @page WLE_Intro WORD_LIST Entry (WLE) Intro
  * The Bash builtin library seems not to have a function for adding
  * a new link to a WORD_LIST, so this is my solution for that need.
  *
