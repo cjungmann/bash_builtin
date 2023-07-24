@@ -28,7 +28,7 @@
  * The macros create "WORD_LIST entries," otherwise known as
  * **WLE** blocks.  A WLE is a single block of memory containing a
  * WORD_LIST struct, a WORD_DESC struct, and bytes to contain a
- * NULL-terminated string.  After initialization, The `word` member
+ * NULL-terminated string.  After initialization, the `word` member
  * of the WORD_LIST struct points to the WORD_DESC struct, whose
  * `word` member points to the string at the end of the WLE.
  *
@@ -167,7 +167,7 @@ while(*(ARREL)) {                  \
    WL_APPEND((TAIL), *(ARREL));    \
    if ((HEAD) == NULL)             \
       (HEAD) = (TAIL);             \
-   ++(ARREL);                      \
+   ++((ARREL));                    \
 }
 
 /** @} */
