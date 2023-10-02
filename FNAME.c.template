@@ -18,7 +18,7 @@
 #include <builtins/bashgetopt.h>  // for internal_getopt(), etc
 #include <builtins/common.h>      // for no_options()
 
-static int <FNAME>(WORD_LIST *list)
+static int <FNAME>_builtin(WORD_LIST *list)
 {
    /************************************
     *     Start of OPTIONS section
@@ -89,7 +89,7 @@ static char *desc_<FNAME>[] = {
 
 struct builtin <FNAME>_struct = {
    .name      = "<FNAME>",
-   .function  = <FNAME>,
+   .function  = <FNAME>_builtin,
    .flags     = BUILTIN_ENABLED,
    .long_doc  = desc_<FNAME>,
    .short_doc = "<FNAME> is cool",
