@@ -1,0 +1,47 @@
+.\" obfuscate the t-word to prevent its being replaced by 'sed'
+.\" with other occurrences of the word:
+.de Tword
+.R T\c
+.R E\c
+.R M\c
+.R P\c
+.R L\c
+.R A\c
+.R T\c
+.R E\c
+..
+.de tword
+.R t\c
+.R e\c
+.R m\c
+.R p\c
+.R l\c
+.R a\c
+.R t\c
+.R e
+..
+.TH README 7
+.SH NAME
+.B README
+\- Hints for using this
+.tword
+directory for new projects
+.SH DESCRIPTION
+.PP
+This is a minimal
+.tword
+for a quick start on a minimal builtin service.
+.SH USAGE
+.PP
+The first thing to do is to replace all occurrences of the word
+.Tword
+ with the command name you want for your new Bash builtin.
+The easiest way to do this is with
+.BR sed .
+Use the following invocation:
+.PP
+.EX
+sed -i s/\c
+.Tword
+/builtin_name/g
+.EE

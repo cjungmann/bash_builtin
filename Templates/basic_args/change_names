@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# protect target word from replacement by this script:
+declare TWORD="TEMP"
+TWORD+="LATE"
+
+if [ "$#" -lt 1 ]; then
+   echo "Enter the name to replace ${TWORD} in this directory's files"
+   exit 1
+fi
+
+declare LOCNAME="$0"
+declare REPNAME="$1"
+
+declare -a sed_args=(
+    -i
+    -e 's/'"${TWORD}_ERROR/${REPNAME^^}_ERROR"'/g'
+    -e 's/'"${TWORD}/${REPNAME}"'/g'
+)
+
+update_file_content()
+{
+    local filename="$1"
+    if [[ "$filename" != "$LOCNAME" ]]; then
+        sed "${sed_args[@]}" "$filename"
+        if [ "$?" -ne 0 ]; then
+            echo "Oops, there was a 'sed' error"
+        fi
+    fi
+}
+
+update_files_contents()
+{
+    local -a dirs=( $( find . -type f ) )
+    for dir in "${dirs[@]}"; do
+        update_file_content "$dir"
+    done
+}
+
+update_directories()
+{
+    local new_name="$1"
+    local -a dirs=( $( find "./${TWORD}".* -maxdepth 0  ) )
+    for dir in "${dirs[@]}"; do
+        local target="${dir/${TWORD}/${new_name}}"
+        # echo "About to rename '$dir' to '$target'"
+        mv "$dir" "$target"
+    done
+}
+
+
+
+update_files_contents "$1"
+update_directories "$1"
