@@ -44,10 +44,6 @@ dispose_shell_var_type DISPOSE_SHELL_VAR = local_dispose_variable_value;
  */
 
 
-// Identifier and caster for potential custom variable:
-#define TEMPLATE_p(var) ((var) && (((var)->attributes) & att_special))
-#define TEMPLATE_cell(var) (TEMPLATE*)((var)->value);
-
 /**
  * Replacement disposal function incorporation necessary resource
  * releasing for custom variables
