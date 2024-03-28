@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+enable -f ./TEMPLATE.so TEMPLATE
+
+TEMPLATE "${@:1}"
