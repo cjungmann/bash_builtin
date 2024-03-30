@@ -1,5 +1,5 @@
-#ifndef ACTION_DISPATCH_H
-#define ACTION_DISPATCH_H
+#ifndef DISPATCHER_H
+#define DISPATCHER_H
 
 #include "local_builtin.h"
 #include "handle.h"

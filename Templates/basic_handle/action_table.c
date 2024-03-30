@@ -1,4 +1,4 @@
-#include "action_dispatch.h"
+#include "dispatcher.h"
 #include "handle_actions.h"
 
 AVERB action_table[] = {
