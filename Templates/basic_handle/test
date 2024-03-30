@@ -3,3 +3,6 @@
 enable -f ./TEMPLATE.so TEMPLATE
 
 TEMPLATE "${@:1}"
+if [ "$?" -ne 0 ]; then
+    echo "TEMPLATE failed: $TEMPLATE_ERROR"
+fi
