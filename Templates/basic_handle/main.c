@@ -2,7 +2,7 @@
 #include "argeater_setters.h"
 #include "action_table.h"
 #include "error_handling.h"
-#include "action_dispatch.h"
+#include "dispatcher.h"
 #include <stdio.h>
 
 #include <unistd.h>  // for read()
