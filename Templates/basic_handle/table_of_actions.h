@@ -3,8 +3,8 @@
 
 #include "dispatcher.h"
 
-extern AVERB action_table[];
-extern unsigned int actions_count;
+extern AVERB TEMPLATE_action_table[];
+extern unsigned int TEMPLATE_actions_count;
 
 
 #endif

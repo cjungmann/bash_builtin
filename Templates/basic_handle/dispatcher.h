@@ -15,6 +15,7 @@ typedef struct TEMPLATE_action_verb {
    const char *usage;
    bool needs_handle;
    TEMPLATE_action action;
+   AE_MAP *arg_map;
 } AVERB;
 
 typedef void (*SHOW_HELP)(AVERB *verbs, int array_len);

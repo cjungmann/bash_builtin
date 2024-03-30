@@ -1,6 +1,6 @@
 #include "local_builtin.h"
 #include "argeater_setters.h"
-#include "action_table.h"
+#include "table_of_actions.h"
 #include "error_handling.h"
 #include "dispatcher.h"
 #include <stdio.h>
@@ -18,7 +18,7 @@ static int TEMPLATE_builtin(WORD_LIST *list)
    int  retval = EXECUTION_SUCCESS;
 
    if (list)
-      retval = perform_verb(action_table, actions_count, list);
+      retval = perform_verb(TEMPLATE_action_table, TEMPLATE_actions_count, list);
    else
    {
       (*ERROR_SINK)("Missing arguments for TEMPLATE");

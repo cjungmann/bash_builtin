@@ -3,6 +3,8 @@
 #include "error_handling.h"
 #include <stdio.h>
 
+/***** CONSTRUCT THE ARGUMENT MAP *****/
+
 static bool help_flag;
 static FILE *file;
 static const char *handle_name;
@@ -18,7 +20,10 @@ AE_ITEM declare_actions[] = {
     "File stream to read", NULL, TEMPLATE_argeater_stream_setter }
 };
 
-AE_MAP declare_map = INIT_MAP(declare_actions);
+AE_MAP TEMPLATE_declare_arg_map = INIT_MAP(declare_actions);
+
+
+/*****  *****/
 
 int TEMPLATE_declare(H_TEMPLATE *handle, ACLONE *args)
 {
@@ -28,7 +33,7 @@ int TEMPLATE_declare(H_TEMPLATE *handle, ACLONE *args)
    file = NULL;
    handle_name = NULL;
 
-   if (argeater_process(args, &declare_map))
+   if (argeater_process(args, &TEMPLATE_declare_arg_map))
    {
       if (handle_name == NULL)
          (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
@@ -45,9 +50,14 @@ int TEMPLATE_declare(H_TEMPLATE *handle, ACLONE *args)
                              handle_name);
             else
             {
-               printf("We would be creating the new handle here.");
-               exit_code = EXECUTION_SUCCESS;
+               (*ERROR_SINK)("TEMPLATE:declare variable '%s' "
+                             "already exists");
             }
+         }
+         else
+         {
+            printf("We would be creating the new handle here.");
+            exit_code = EXECUTION_SUCCESS;
          }
       }
    }
