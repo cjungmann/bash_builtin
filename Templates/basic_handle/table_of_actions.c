@@ -6,13 +6,17 @@
 // below is properly setup.  Only consider replace this if the
 // default help provider doesn't suit your needs.
 
+// Add actions by copying action_boilerplate.def to action_[new_verb].c,
+// modify code in the C file, then add the AVERB declaration in the new
+// C file to the extern declarations and the action_table:
+
 extern AVERB TEMPLATE_help_verb;
-extern AVERB TEMPLATE_boilerplate_verb;
+// extern AVERB TEMPLATE_boilerplate_verb;
 extern AVERB TEMPLATE_declare_verb;
 
 AVERB *TEMPLATE_action_table[] = {
    &TEMPLATE_help_verb,
-   &TEMPLATE_boilerplate_verb,
+   // &TEMPLATE_boilerplate_verb,
    &TEMPLATE_declare_verb
 };
 
