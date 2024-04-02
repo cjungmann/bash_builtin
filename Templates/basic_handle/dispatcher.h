@@ -18,11 +18,11 @@ typedef struct TEMPLATE_action_verb {
    AE_MAP *arg_map;
 } AVERB;
 
-typedef void (*SHOW_HELP)(AVERB *verbs, int array_len);
+typedef void (*SHOW_HELP)(AVERB** verbs, int array_len);
 
-AVERB* find_verb(AVERB* verb_array, int array_len, const char *name);
-int perform_verb(AVERB* verb_array, int array_len, WORD_LIST *args);
-void TEMPLATE_default_help(AVERB *verbs, int array_len);
+AVERB* find_verb(AVERB** verb_array, int array_len, const char *name);
+int perform_verb(AVERB** verb_array, int array_len, WORD_LIST *args);
+void TEMPLATE_default_help(AVERB** verbs, int array_len);
 
 extern SHOW_HELP show_help;
 

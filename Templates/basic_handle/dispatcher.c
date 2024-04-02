@@ -4,27 +4,27 @@
 
 SHOW_HELP show_help = TEMPLATE_default_help;
 
-void TEMPLATE_default_help(AVERB *verbs, int array_len)
+void TEMPLATE_default_help(AVERB** verbs, int array_len)
 {
-   AVERB *ptr = verbs;
-   AVERB *end = ptr + array_len;
+   AVERB **ptr = verbs;
+   AVERB **end = ptr + array_len;
 
    while (ptr < end)
    {
-      printf("Action %s:\n   %s\n", ptr->name, ptr->desc);
+      printf("Action %s:\n   %s\n", (*ptr)->name, (*ptr)->desc);
       ++ptr;
    }
 }
 
-AVERB* find_verb(AVERB* verb_array, int array_len, const char *name)
+AVERB* find_verb(AVERB** verb_array, int array_len, const char *name)
 {
-   AVERB *ptr = verb_array;
-   AVERB *end = ptr + array_len;
+   AVERB **ptr = verb_array;
+   AVERB **end = ptr + array_len;
 
    while (ptr < end)
    {
-      if (strcmp(name, ptr->name)==0)
-         return ptr;
+      if (strcmp(name, (*ptr)->name)==0)
+         return *ptr;
 
       ++ptr;
    }
@@ -33,7 +33,7 @@ AVERB* find_verb(AVERB* verb_array, int array_len, const char *name)
 }
 
 
-int perform_verb(AVERB* verb_array, int array_len, WORD_LIST *args)
+int perform_verb(AVERB** verb_array, int array_len, WORD_LIST *args)
 {
    int retval = EXECUTION_FAILURE;
    WORD_LIST *w_ptr = args;
