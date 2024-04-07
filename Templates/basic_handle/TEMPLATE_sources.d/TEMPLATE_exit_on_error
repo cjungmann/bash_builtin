@@ -1,0 +1,12 @@
+# -*- mode:sh -*-
+TEMPLATE_exit_on_error()
+{
+    local -i exval="$?"
+    if [ "$exval" -ne 0 ]; then
+        printf $'TEMPLATE error at line %d of script %s:\n' \
+               $(( "${BASH_LINENO[0]}" - 1 )) \
+               "${BASH_SOURCE[1]}"
+        printf $'   \e[31;1m%s\e[m\n' "$TEMPLATE_ERROR"
+        exit 1
+    fi
+}
