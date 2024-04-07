@@ -22,6 +22,7 @@ update_file_content()
 {
     local filename="$1"
     if [[ "$filename" != "$LOCNAME" ]]; then
+        echo "Updating contents of '$filename'"
         sed "${sed_args[@]}" "$filename"
         if [ "$?" -ne 0 ]; then
             echo "Oops, there was a 'sed' error"
@@ -40,15 +41,21 @@ update_files_contents()
 update_directories()
 {
     local new_name="$1"
-    local -a dirs=( $( find "./${TWORD}".* -maxdepth 0  ) )
+    local -a dirs=( $( find "./${TWORD}"* -maxdepth 0  ) )
     for dir in "${dirs[@]}"; do
         local target="${dir/${TWORD}/${new_name}}"
         # echo "About to rename '$dir' to '$target'"
         mv "$dir" "$target"
+        if [ -d "$target" ]; then
+            cd "$target"
+            update_directories "$1"
+            update_files_contents "$1"
+            cd ..
+        fi
     done
 }
 
 
 
-update_files_contents "$1"
 update_directories "$1"
+update_files_contents "$1"
