@@ -41,7 +41,7 @@ int install_payload_to_new_shell_var(SHELL_VAR **sv, const char *name, void *pay
    SHELL_VAR *tsv = NULL;
 
    // Prepare for recursion by making local variables when appropriate
-   if (variable_context = 0)
+   if (variable_context == 0)
       tsv = bind_variable(name, "", 0);
    else
       tsv = make_local_variable(name, 0);
