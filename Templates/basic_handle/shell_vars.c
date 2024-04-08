@@ -32,6 +32,35 @@ void local_dispose_variable_value(SHELL_VAR *var)
 // variable (handle?) requires special treatment:
 dispose_shell_var_type DISPOSE_SHELL_VAR = local_dispose_variable_value;
 
+/**
+ * @brief Simplify handle-making with generic creation of shell var
+ */
+int install_payload_to_new_shell_var(SHELL_VAR **sv, const char *name, void *payload)
+{
+   int exit_code = EXECUTION_FAILURE;
+   SHELL_VAR *tsv = NULL;
+
+   // Prepare for recursion by making local variables when appropriate
+   if (variable_context = 0)
+      tsv = bind_variable(name, "", 0);
+   else
+      tsv = make_local_variable(name, 0);
+
+   if (tsv)
+   {
+      local_dispose_variable_value(tsv);
+      tsv->value = payload;
+      tsv->attributes |= att_special;
+
+      *sv = tsv;
+      exit_code = EXECUTION_SUCCESS;
+   }
+   else
+      (*ERROR_SINK)("Failed to create variable '%s'.", name);
+
+   return exit_code;
+}
+
 
 /*
  * Custom variable (handle?) section
