@@ -97,7 +97,7 @@ int TEMPLATE_boilerplate(H_TEMPLATE *handle, ACLONE *args)
       // Handle allocated resources (open stream) first
       // to ensure they are deallocated upon exit:
       if (file==NULL)
-         (*ERROR_SINK)("TEMPLATE:declare failed to open required file");
+         (*ERROR_SINK)("TEMPLATE:boilerplate failed to open required file");
       else
       {
          if (flag_variable)
