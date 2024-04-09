@@ -1,4 +1,5 @@
 #include "shell_vars.h"
+#include "error_handling.h"
 
 /**
  * @brief Duplicate of private Bash function `dispose_variable_value`.
