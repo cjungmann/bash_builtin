@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+declare base="TEMPLATE"
+
+if [ "$#" -eq 0 ]; then
+    echo "spawn_action requires a new action name"
+    exit 1
+fi
+
+declare action="$1"
+
+declare new_name="action_${action}.c"
+declare new_verb="${base}_${action}_verb"
+
+if [ -f "$new_name" ]; then
+    echo "Action '${action}' is already represented by file '$new_name'"
+    exit 1
+fi
+
+sed "s/boilerplate/$1/g" action_boilerplate.def > "$new_name"
+chmod u+w "$new_name"
+
+declare -a sed_args=(
+    -e '/\/\/ END-OF-EXTERNS/i extern AVERB '"${new_verb};"
+    -e '/   \/\/ END-OF-VERBS/i \ \ \ &'"${new_verb},"
+)
+
+sed -i "${sed_args[@]}" table_of_actions.c
+
