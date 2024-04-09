@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+declare TARGET="bitest"
+if [ "$#" -gt 0 ]; then
+    TARGET="$1"
+fi
+
+echo "Doin it, baby"
+rm -rf test
+if [ "$?" -ne 0 ]; then
+    echo "Oops, rm failed"
+else
+    cp -r basic_handle test
+    if [ "$?" -ne 0 ]; then
+        echo "Oops, cp failed"
+    else
+        cd test
+        ./change_names "$TARGET"
+        make
+    fi
+fi
