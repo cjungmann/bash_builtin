@@ -12,6 +12,14 @@
 #include <stdbool.h>           // for bool data type
 
 /***** Steps to add a new handle action:
+ * tldr;  Use 'spawn_action' to do most of what's below.
+ * spawn_action will make a copy of this file (action_boilerplate.def)
+ * using the new action name, then add 'extern ...' and action array
+ * elements to 'table_of_actions.c'.  All that remains to do after
+ * spawn_action is to work on the new action source file to implement
+ * the features of the new action.
+ *
+ * Long-hand Method for adding a new action:
  * 1. Replace 'boilerplate' substrings with the new action name.
  *    'TEMPLATE', if it remains, should replaced at a higher level
  *    to change for the project.
