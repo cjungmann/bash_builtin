@@ -11,15 +11,16 @@
 // C file to the extern declarations and the action_table:
 
 extern AVERB TEMPLATE_help_verb;
-// extern AVERB TEMPLATE_boilerplate_verb;
 extern AVERB TEMPLATE_declare_verb;
+// END-OF-EXTERNS
 
 AVERB *TEMPLATE_action_table[] = {
    &TEMPLATE_help_verb,
-   // &TEMPLATE_boilerplate_verb,
-   &TEMPLATE_declare_verb
+   &TEMPLATE_declare_verb,
+   // END-OF-VERBS
+   NULL
 };
 
 __attribute__((unused))
-unsigned int TEMPLATE_actions_count = sizeof(TEMPLATE_action_table) / sizeof(AVERB*);
+unsigned int TEMPLATE_actions_count = (sizeof(TEMPLATE_action_table) / sizeof(AVERB*)) - 1;
 
