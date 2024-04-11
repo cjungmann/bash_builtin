@@ -1,4 +1,5 @@
 #include "handle.h"
+#include "error_handling.h"
 
 bool TEMPLATE_p(SHELL_VAR *var)
 {
