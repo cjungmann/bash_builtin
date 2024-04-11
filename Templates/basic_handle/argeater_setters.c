@@ -1,6 +1,7 @@
 #include "local_builtin.h"
 #include "error_handling.h"
 #include "argeater_setters.h"
+#include "handle.h"
 
 #include <errno.h>
 #include <string.h>   // for strerror()
@@ -63,4 +64,48 @@ bool TEMPLATE_argeater_bool_setter(const char **target, const char *value)
 {
    *(bool*)target = true;
    return true;
+}
+
+bool TEMPLATE_argeater_handle_setter(const char **target, const char *value)
+{
+   bool retval = false;
+   SHELL_VAR *sv = find_variable(value);
+   if (sv)
+   {
+      if (TEMPLATE_p(sv))
+      {
+         *(SHELL_VAR**)target = sv;
+         retval = true;
+      }
+      else
+         (*ERROR_SINK)("Shell variable '%s' is not a TEMPLATE handle", value);
+   }
+   else
+      (*ERROR_SINK)("No shell variable named '%s'", value);
+
+   return retval;
+}
+
+bool TEMPLATE_argeater_return_sv_setter(const char **target, const char *value)
+{
+   bool retval = false;
+   SHELL_VAR *sv = find_variable(value);
+   // Overwrite shell variable in current context
+   if (!sv || sv->context != variable_context)
+   {
+      if (variable_context == 0)
+         sv = bind_variable(value, "", 0);
+      else
+         sv = make_local_variable(value, 0);
+   }
+
+   if (sv)
+   {
+      *(SHELL_VAR**)target = sv;
+      retval = true;
+   }
+   else
+      (*ERROR_SINK)("Unable to find or make shell variable '%s'", value);
+
+   return retval;
 }

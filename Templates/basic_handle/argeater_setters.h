@@ -8,5 +8,8 @@ bool TEMPLATE_argeater_file_setter(const char **target, const char *value);
 bool TEMPLATE_argeater_long_setter(const char **target, const char *value);
 bool TEMPLATE_argeater_bool_setter(const char **target, const char *value);
 
+bool TEMPLATE_argeater_handle_setter(const char **target, const char *value);
+bool TEMPLATE_argeater_return_sv_setter(const char **target, const char *value);
+
 
 #endif
