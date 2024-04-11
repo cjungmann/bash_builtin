@@ -7,6 +7,7 @@
 #include "handle.h"            // for H_TEMPLATE (handle) prototype
 #include "dispatcher.h"        // for AVERB definition
 #include "argeater_setters.h"  // argeater_setters sending errors to TEMPLATE_ERROR
+#include "shell_vars.h"        // for install_payload_to_new_shell_var
 #include "error_handling.h"    // for ERROR_SINK function pointer
 #include <stdio.h>             // printf
 #include <stdbool.h>           // for bool data type
@@ -23,11 +24,11 @@ static const char *handle_name;
 // Array of items that associate status variables to the means
 // to access them and text to be used in a help display:
 AE_ITEM declare_actions[] = {
-   {(const char **)&file, "file", '\0', AET_ARGUMENT,
-    "File stream to read", NULL, TEMPLATE_argeater_stream_setter },
-
    {&handle_name, "handle_name", '\0', AET_ARGUMENT,
-    "Name of new handle", NULL, argeater_string_setter }
+    "Name of new handle", NULL, argeater_string_setter },
+
+   {(const char **)&file, "file", '\0', AET_ARGUMENT,
+    "File stream to read", NULL, TEMPLATE_argeater_stream_setter }
 };
 
 // File-scope instantiation of argument map to be used
@@ -55,8 +56,13 @@ int TEMPLATE_declare(H_TEMPLATE *handle, ACLONE *args)
       {
          if (handle_name)
          {
-            printf("Here we go, the imaginary handle is ready.\n");
-            exit_code = EXECUTION_SUCCESS;
+            int lenval = strlen(TEMPLATE_HANDLE_ID);
+            char *buff = xmalloc(lenval+1);
+            memcpy(buff, TEMPLATE_HANDLE_ID, lenval);
+            buff[lenval] = '\0';
+
+            SHELL_VAR *newsv = NULL;
+            exit_code = install_payload_to_new_shell_var(&newsv, handle_name, buff);
          }
          else
             (*ERROR_SINK)("TEMPLATE:declare requires new handle name");
