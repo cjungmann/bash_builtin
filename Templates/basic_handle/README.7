@@ -28,20 +28,206 @@
 directory for new projects
 .SH DESCRIPTION
 .PP
-This is a minimal
+This
 .tword
-for a quick start on a minimal builtin service.
-.SH USAGE
+directory aims to speed development of new Bash builtin projects
+utilitizing a handle model.
+It includes:
+stubs for
+.IR help " and " declare
+actions, man pages, a boilerplate
+(\c
+.tword \c
+)
+for new actions, and a some simple scripts that perform several
+setup steps for easier customization.
+.SS USING SCRIPTS
 .PP
-The first thing to do is to replace all occurrences of the word
-.Tword
- with the command name you want for your new Bash builtin.
-The easiest way to do this is with
-.BR sed .
-Use the following invocation:
+There are two main scripts,
+.BR change_names " and " spawn_action ,
+that should make developing a new handle-based Bash builtin much
+easier.
+They each perform several steps in their own domain.
+The scripts can be used a black-boxes as are about to show, and the
+details of what they do will be discussed below.
+.SH USING BASIC_HANDLE TEMPLATE
 .PP
+This section will show how to use the contents of this directory
+and the tools contained within it to get a headstart with a new
+handle-based Bash builtin command.
+.SS START A NEW PROJECT
+.PP
+Let's pretend we're making a new handle-based Bash builtin named
+.BR newc .
+.TS
+tab(|);
+l lx.
+T{
 .EX
-find . -type f -exec sed -i \(aqs/\c
-.Tword
-/newname/g' {} ';'
+cp -r ../basic_handle ~/work/newc
 .EE
+T}|T{
+Copy this directory to a new project directory.
+T}
+
+T{
+.EX
+cd ~/work/newc
+.EE
+T}|T{
+Enter the new directory.
+T}
+
+T{
+.EX
+\&./change_names newc
+.EE
+T}|T{
+Change file contents and file and directory names to use the project name.
+T}
+
+T{
+.EX
+make
+.EE
+T}|T{
+Create the barebones Bash builtin.
+T}
+.TE
+.SS ADDING NEW ACTIONS
+.PP
+A useful handle will support actions beyond simply declaring the
+handle.
+A boilerplate source file,
+.BR action_boilerplate.def ,
+is provided to use as another
+.tword
+for new actions.
+.PP
+The
+.B spawn_action
+script makes a copy of
+.B action_boilerplate.def
+into a new C action source file that contains the minimum requirements
+for a new action.
+After updating the contents of the new C action source file with the
+action name, the new action is registered to make it available for use.
+.PP
+Let's make a new print action:
+.TS
+tab(|);
+l lx.
+T{
+\&./spawn_action print
+T}|T{
+Creates a new file,
+.BR action_print.c ,
+and registers the new action in
+.BR table_of_actions.c .
+T}
+
+T{
+emacs action_print.c
+T}|T{
+Add
+.B print
+implementation to the new action file.
+Also pay attention to the
+.B needs_handle
+flag in the verb declaration if you're making an action that doesn't
+need an initialized action.
+T}
+.TE
+
+.SH SETUP DETAILS
+.PP
+This is not about starting from scratch.
+The
+.tword
+provides a scaffolding in which a complete project can be built.
+This section describes what is provided in the template, the
+structure of the parts, and the steps needed to add your project's
+unique flair.
+.SS PROVISIONS
+.PP
+There are several source files that provide complete functionality.
+.BR dispatcher.c ", " error_handling.c ", " shell_vars.c ,
+and their associated headers may well be left alone without
+modification, as well as
+.BR main.c ,
+which has no header file.
+.PP
+Some source files are expected to be modified, namely
+.BR handle.c ", " handle.h ", and " table_of_actions.c .
+.SS CUSTOM HANDLE
+.PP
+There are two areas of customization, the
+.BR handle " and the " table_of_actions .
+The
+.B handle must include at least a working identifier function
+with a
+.B _p
+suffix and a casting function with a
+.B _cell
+suffix.
+These functions and/or macros follow the convention used in the
+Bash source code, and the
+.tword
+uses them in
+.BR dispatcher.c .
+Besides the identified and casting functions, the
+.BR handle.c " and " handle.h file can and should be augmented with
+code for initializing, destroying, and navigating handles.
+.SS NEW ACTIONS
+.PP
+The simplest and recommended way to add a new action is to
+.TS
+tab(|);
+l lx.
+1|T{
+Copy
+.B action_boilerplate.def
+to a C source file.
+T}
+
+2|T{
+With
+.B sed
+or your text processor,
+change the string
+.I boilerplate
+to the new action's name.
+T}
+
+3|T{
+.PP
+In
+.BR table_of_actions.c ,
+dd an
+.B extern
+statement and a pointer to the new
+.B AVERB
+object to the
+.I action_table
+array.
+.PP
+Make sure the new entries come before the
+insertion point marker comments that start with
+.IR "// END-OF-"
+to permit subsequent usage fo the
+.B spawn_action
+script.
+T}
+.TE
+
+.SH REMOVING AN ACTION
+.PP
+When it is deemed necessary to remove an action from an handle,
+the only requirement is to remove the
+.B AVERB
+entry in the
+.B TEMPLATE_action_table
+array.
+It's best to delete the source file and the extern reference to it,
+but that can be safely deferred because without the reference in the
+array, the extern statement and source file will be ignored.
