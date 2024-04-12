@@ -12,35 +12,6 @@
 #include <stdio.h>             // printf
 #include <stdbool.h>           // for bool data type
 
-/***** Steps to add a new handle action:
- * tldr;  Use 'spawn_action' to do most of what's below.
- * spawn_action will make a copy of this file (action_boilerplate.def)
- * using the new action name, then add 'extern ...' and action array
- * elements to 'table_of_actions.c'.  All that remains to do after
- * spawn_action is to work on the new action source file to implement
- * the features of the new action.
- *
- * Long-hand Method for adding a new action:
- * 1. Replace 'boilerplate' substrings with the new action name.
- *    'TEMPLATE', if it remains, should replaced at a higher level
- *    to change for the project.
- * 2. Construct the Argument Map
- *    a. Declare file-scope variables to hold option values.
- *    b. Create AE_ITEM array for the file-scope variables.
- *    c. Instantiate the argument map (AE_MAP).
- * 3. Code the "action function" that performs the action
- *    a. Set default values of file-scope variables.
- *    b. Run `argeater_process` to retrieve user's arguments.
- *    c. Perform action's mission according to user's intention.
- *    d  Release any resources that were acquired through
- *       the setters (especially a stream or file handle).
- * 4. Update the AVERB definition with specifics of this action.
- * 5. Update file `table_of_actions.c`
- *    a. Add extern declaration to the new AVERB definition.
- *    b. Add pointer to extern AVERB to the action trable.
- *****/
-
-
 /***** CONSTRUCT THE ARGUMENT MAP *****/
 
 // STATUS VARIABLES
@@ -98,9 +69,13 @@ AE_MAP TEMPLATE_boilerplate_arg_map = INIT_MAP(boilerplate_actions);
 
 /***** Action Implementation *****/
 
-int TEMPLATE_boilerplate(H_TEMPLATE *handle, ACLONE *args)
+int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
 {
    int exit_code = EXECUTION_SUCCESS;
+
+   // Delete these statements if this action does not require a handle:
+   __attribute__((unused))
+   H_TEMPLATE *handle = TEMPLATE_cell(sv_handle);
 
    // Initialize STATUS VARIABLES for each action invocation:
    flag_variable = false;
