@@ -7,7 +7,7 @@
 #include <argeater.h>
 #include <stdbool.h>
 
-typedef int (*TEMPLATE_action)(H_TEMPLATE* handle, ACLONE *args);
+typedef int (*TEMPLATE_action)(SHELL_VAR* handle, ACLONE *args);
 
 typedef struct TEMPLATE_action_verb {
    const char *name;

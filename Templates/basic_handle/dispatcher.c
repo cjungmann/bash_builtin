@@ -37,7 +37,7 @@ int perform_verb(AVERB** verb_array, int array_len, WORD_LIST *args)
 {
    int retval = EXECUTION_FAILURE;
    WORD_LIST *w_ptr = args;
-   H_TEMPLATE *handle = NULL;
+   SHELL_VAR *handle = NULL;
 
    if (w_ptr && w_ptr->word)
    {
@@ -56,7 +56,7 @@ int perform_verb(AVERB** verb_array, int array_len, WORD_LIST *args)
                if (sv)
                {
                   if (TEMPLATE_p(sv))
-                     handle = TEMPLATE_cell(sv);
+                     handle = sv;
                   else
                   {
                      (*ERROR_SINK)("Variable '%s' is not a TEMPLATE handle", hname);

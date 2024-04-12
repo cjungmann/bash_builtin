@@ -39,7 +39,7 @@ AE_MAP TEMPLATE_declare_arg_map = INIT_MAP(declare_actions);
 
 /***** Action Implementation *****/
 
-int TEMPLATE_declare(H_TEMPLATE *handle, ACLONE *args)
+int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
 {
    int exit_code = EXECUTION_FAILURE;
 
