@@ -6,7 +6,7 @@
 typedef void (*dispose_shell_var_type)(SHELL_VAR *var);
 extern dispose_shell_var_type DISPOSE_SHELL_VAR;
 
-int install_payload_to_new_shell_var(SHELL_VAR **sv, const char *name, void *payload);
+int install_payload_to_shell_var(SHELL_VAR **sv, const char *name, void *payload);
 
 
 #endif

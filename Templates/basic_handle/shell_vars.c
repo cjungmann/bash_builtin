@@ -36,16 +36,14 @@ dispose_shell_var_type DISPOSE_SHELL_VAR = local_dispose_variable_value;
 /**
  * @brief Simplify handle-making with generic creation of shell var
  */
-int install_payload_to_new_shell_var(SHELL_VAR **sv, const char *name, void *payload)
+int install_payload_to_shell_var(SHELL_VAR **sv, const char *name, void *payload)
 {
    int exit_code = EXECUTION_FAILURE;
    SHELL_VAR *tsv = NULL;
 
-   // Prepare for recursion by making local variables when appropriate
-   if (variable_context == 0)
-      tsv = bind_variable(name, "", 0);
-   else
-      tsv = make_local_variable(name, 0);
+   // `bind_variable` is better than `make_local_variable` for enabling
+   // recursion in scripts
+   tsv = bind_variable(name, "", 0);
 
    if (tsv)
    {
@@ -53,7 +51,11 @@ int install_payload_to_new_shell_var(SHELL_VAR **sv, const char *name, void *pay
       tsv->value = payload;
       tsv->attributes |= att_special;
 
-      *sv = tsv;
+      // Use is allowed to ignore the instance of a new shell_var
+      // (success or failure indicated by exit code).
+      if (sv)
+         *sv = tsv;
+
       exit_code = EXECUTION_SUCCESS;
    }
    else

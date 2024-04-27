@@ -7,7 +7,7 @@
 #include "handle.h"            // for H_TEMPLATE (handle) prototype
 #include "dispatcher.h"        // for AVERB definition
 #include "argeater_setters.h"  // argeater_setters sending errors to TEMPLATE_ERROR
-#include "shell_vars.h"        // for install_payload_to_new_shell_var
+#include "shell_vars.h"        // for install_payload_to_shell_var
 #include "error_handling.h"    // for ERROR_SINK function pointer
 #include <stdio.h>             // printf
 #include <stdbool.h>           // for bool data type
@@ -62,10 +62,10 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
             buff[lenval] = '\0';
 
             SHELL_VAR *newsv = NULL;
-            exit_code = install_payload_to_new_shell_var(&newsv, handle_name, buff);
+            exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
          }
          else
-            (*ERROR_SINK)("TEMPLATE:declare requires new handle name");
+            (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
 
          // Close the file after using it:
          if (file != stdin)
