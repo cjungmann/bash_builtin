@@ -86,6 +86,25 @@ bool TEMPLATE_argeater_handle_setter(const char **target, const char *value)
    return retval;
 }
 
+bool TEMPLATE_argeater_function_setter(const char **target, const char *value)
+{
+   SHELL_VAR *sv = find_function(value);
+   if (sv)
+   {
+      if (function_p(sv))
+      {
+         *target = value;
+         return true;
+      }
+      else
+         (*ERROR_SINK)("Shell variable '%s' is not a function.\n", value);
+   }
+   else
+      (*ERROR_SINK)("Failed to find script function '%s'.\n", value);
+
+   return false;
+}
+
 bool TEMPLATE_argeater_return_sv_setter(const char **target, const char *value)
 {
    bool retval = false;
