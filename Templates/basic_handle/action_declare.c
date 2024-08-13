@@ -4,7 +4,7 @@
  * @brief Declare provisions for implementing a help display function.
  */
 
-#include "handle.h"            // for H_TEMPLATE (handle) prototype
+#include "handle.h"            // for TEMPLATEH (handle) prototype
 #include "dispatcher.h"        // for AVERB definition
 #include "argeater_setters.h"  // argeater_setters sending errors to TEMPLATE_ERROR
 #include "shell_vars.h"        // for install_payload_to_shell_var
@@ -43,10 +43,33 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
 {
    int exit_code = EXECUTION_FAILURE;
 
-   file = NULL;
-   handle_name = NULL;
+   static const char *handle_name = NULL;
+   static FILE *file = NULL;
 
-   if (argeater_process(args, &TEMPLATE_declare_arg_map))
+   static const char *name_arg = NULL;
+   static const char *value_arg = NULL;
+   static const char *callback_arg = NULL;
+
+   static AE_ITEM items[] = {
+      {&handle_name, "handle_name", '\0', AET_ARGUMENT,
+       "Name of new handle", NULL, argeater_string_setter },
+
+      {(const char **)&file, "file", '\0', AET_ARGUMENT,
+       "File stream to read", NULL, TEMPLATE_argeater_stream_setter },
+
+      {&name_arg, "generic_name", 'n', AET_VALUE_OPTION,
+       "some name", NULL, argeater_string_setter },
+
+      {&value_arg, "generic_value", 'v', AET_VALUE_OPTION,
+       "some value", NULL, argeater_string_setter },
+
+      {&callback_arg, "callback_function", 'f', AET_VALUE_OPTION,
+       "script function", NULL, TEMPLATE_argeater_function_setter}
+   };
+
+   AE_MAP map = INIT_MAP(items);
+
+   if (argeater_process(args, &map))
    {
       // Handle allocated resources (open stream) first
       // to ensure they are deallocated upon exit:
@@ -56,18 +79,40 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
       {
          if (handle_name)
          {
-            int lenval = strlen(TEMPLATE_HANDLE_ID);
-            char *buff = xmalloc(lenval+1);
-            memcpy(buff, TEMPLATE_HANDLE_ID, lenval);
-            buff[lenval] = '\0';
+            int hlen = TEMPLATE_calc_handle_size(name_arg,
+                                                 value_arg,
+                                                 callback_arg);
+            char *buff = xmalloc(hlen);
+            if (buff)
+            {
+               TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen,
+                                                          name_arg,
+                                                          value_arg,
+                                                          callback_arg);
 
-            SHELL_VAR *newsv = NULL;
-            exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
+               if (th)
+               {
+                  SHELL_VAR *newsv = NULL;
+                  exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
+               }
+               else
+               {
+                  (*ERROR_SINK)("TEMPLATE:handle initialization failed");
+                  free(buff);
+                  buff = NULL;
+               }
+            }
+            else
+               (*ERROR_SINK)("TEMPLATE:out-of-memory while allocating handle");
          }
          else
             (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
 
-         // Close the file after using it:
+         // Use the open stream, 'file', then close it before
+         // exiting 'declare' to prevent leaving open handles
+         // upon an unexpected termination:
+
+         // collect_info_from_file(file);
          if (file != stdin)
             fclose(file);
       }
