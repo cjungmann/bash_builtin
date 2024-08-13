@@ -4,7 +4,7 @@
  * @brief Boilerplate provisions for implementing a help display function.
  */
 
-#include "handle.h"            // for H_TEMPLATE (handle) prototype
+#include "handle.h"            // for TEMPLATEH (handle) prototype
 #include "dispatcher.h"        // for AVERB definition
 #include "argeater_setters.h"  // argeater_setters sending errors to TEMPLATE_ERROR
 #include "error_handling.h"    // for ERROR_SINK function pointer
@@ -75,7 +75,7 @@ int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
 
    // Delete these statements if this action does not require a handle:
    __attribute__((unused))
-   H_TEMPLATE *handle = TEMPLATE_cell(sv_handle);
+   TEMPLATEH *handle = TEMPLATE_cell(sv_handle);
 
    // Initialize STATUS VARIABLES for each action invocation:
    flag_variable = false;
