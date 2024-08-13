@@ -94,50 +94,38 @@ T}|T{
 Create the barebones Bash builtin.
 T}
 .TE
-.SS ADDING NEW ACTIONS
+.SS ADDING NEW ACTIONS WITH spawn_action SCRIPT
 .PP
-A useful handle will support actions beyond simply declaring the
-handle.
-A boilerplate source file,
-.BR action_boilerplate.def ,
-is provided to use as another
-.tword
-for new actions.
+Define actions to extend the handle's utility.
 .PP
 The
 .B spawn_action
-script makes a copy of
+script uses
 .B action_boilerplate.def
-into a new C action source file that contains the minimum requirements
-for a new action.
-After updating the contents of the new C action source file with the
-action name, the new action is registered to make it available for use.
+as a model for creating an empty action source file.
+The new source file contains a skeleton of code upon which a new
+handle action can be developed.
+.B spawn_action
+also updates
+.B table_of_actions.c
+to enable the new action in the list of actions.
 .PP
-Let's make a new print action:
-.TS
-tab(|);
-l lx.
-T{
-\&./spawn_action print
-T}|T{
-Creates a new file,
+The following example creates a new action,
+.BR print ,
+with the
+.B spawn_action
+script.
+.EX
+./spawn_action print
+.EE
+.PP
+A new source file,
 .BR action_print.c ,
-and registers the new action in
+will be created and the
+.B action
+verb and function reference will be added to the appropriate
+structures in
 .BR table_of_actions.c .
-T}
-
-T{
-emacs action_print.c
-T}|T{
-Add
-.B print
-implementation to the new action file.
-Also pay attention to the
-.B needs_handle
-flag in the verb declaration if you're making an action that doesn't
-need an initialized action.
-T}
-.TE
 
 .SH SETUP DETAILS
 .PP
@@ -178,48 +166,6 @@ uses them in
 Besides the identified and casting functions, the
 .BR handle.c " and " handle.h file can and should be augmented with
 code for initializing, destroying, and navigating handles.
-.SS NEW ACTIONS
-.PP
-The simplest and recommended way to add a new action is to
-.TS
-tab(|);
-l lx.
-1|T{
-Copy
-.B action_boilerplate.def
-to a C source file.
-T}
-
-2|T{
-With
-.B sed
-or your text processor,
-change the string
-.I boilerplate
-to the new action's name.
-T}
-
-3|T{
-.PP
-In
-.BR table_of_actions.c ,
-dd an
-.B extern
-statement and a pointer to the new
-.B AVERB
-object to the
-.I action_table
-array.
-.PP
-Make sure the new entries come before the
-insertion point marker comments that start with
-.IR "// END-OF-"
-to permit subsequent usage fo the
-.B spawn_action
-script.
-T}
-.TE
-
 .SH REMOVING AN ACTION
 .PP
 When it is deemed necessary to remove an action from an handle,
