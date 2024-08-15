@@ -39,7 +39,7 @@ first, and more advanced or experimental things come later.
   My first builtin simply says "hello" and, crucially for starting
   out: confirms that the builtin is in the same process as the
   script that calls it, otherwise my potential builtins would forfeit
-  and C performance benefits to the sub process penalty.
+  any C performance benefits to the sub process penalty.
 
 - **walk_opts.c** and **walk_args.c**  
   contain my first efforts at reading the command line arguments
