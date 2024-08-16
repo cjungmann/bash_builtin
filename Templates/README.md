@@ -1,6 +1,13 @@
 # BASH BUILTIN TEMPLATES
 
-There are three template directories:
+I create templates to make development of new projects easier.
+They compile as they stand, with Makefiles to build and install
+the new builtins.
+
+The templates consist of multiple files, so each is in its own
+directory.
+
+## TEMPLATES
 
 - **basic**  
   Most sparse template for builtin development, consisting of a source,
@@ -28,3 +35,4 @@ There are three template directories:
   a handle action model as a means to communicate intentions to the
   handle.  The template also includes a script to create new and
   register new *actions* to use with a handle.
+
