@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# This development script deletes, clones, renames, and rebuilds
+# the `test directory with the `basic_handle` template.
+
 declare TARGET="bitest"
 if [ "$#" -gt 0 ]; then
     TARGET="$1"
