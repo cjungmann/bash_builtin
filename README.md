@@ -19,6 +19,15 @@ basic template spawned several more targeted templates.  The last
 template, _basic_handle_, continues to get attention as I add tools
 and other code.
 
+## Prerequisite
+
+The Bash-Builtin headers must be installed in order to compile the
+examples.
+
+~~~sh
+sudo apt-get install bash-builtins
+~~~
+
 ## Development Phases
 
 The project preserves two phases of development, the experimental
