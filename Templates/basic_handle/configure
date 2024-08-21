@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+declare -a req_libs=(
+    contools
+    argeater
+    pager
+    SM
+    absl
+    crypto
+)
+
+declare -a missing_libs=()
+
+declare LDCONFIG
+
+find_ldconfig()
+{
+    local -n lc="LDCONFIG"
+    local -a set=( $( find / 2>/dev/null | grep ldconfig$ | grep sbin ) )
+    if [ "${#set[*]}" -gt 0 ]; then
+        LDCONFIG="${set[0]}"
+    fi
+}
+
+
+lib_is_installed()
+{
+    local name="$1"
+    local -a matches=( $( "$LDCONFIG" -p | grep -o ^[[:space:]]*"$name" ) )
+    [ "${#matches[*]}" -eq 1 ]
+}
+
+
+check_libs()
+{
+    local -n mlibs="missing_libs"
+    for lib in "${req_libs[@]}"; do
+        local name="lib$lib.so"
+        if ! lib_is_installed "$name"; then
+            mlibs+=( "$name" )
+            echo "We gotta install '$lib'"
+        fi
+    done
+}
+
+
+find_ldconfig
+check_libs
+
+echo "There are ${#missing_libs[*]} missing libraries"
