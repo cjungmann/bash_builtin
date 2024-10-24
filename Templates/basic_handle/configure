@@ -4,9 +4,6 @@ declare -a req_libs=(
     contools
     argeater
     pager
-    SM
-    absl
-    crypto
 )
 
 declare -a missing_libs=()
@@ -37,14 +34,81 @@ check_libs()
     for lib in "${req_libs[@]}"; do
         local name="lib$lib.so"
         if ! lib_is_installed "$name"; then
-            mlibs+=( "$name" )
-            echo "We gotta install '$lib'"
+            mlibs+=( "$lib" )
         fi
     done
 }
 
+install_missing_lib()
+{
+    local libname="$1"
+    local repo_name="lib_$libname"
+    local repo_url="https://www.github.com/cjungmann/${repo_name}.git"
+    echo "Install library '$libname'"
+    read -n1 -p "Enter 'l', 'g', 's', or 'q'"
+    echo
+    case "$REPLY" in
+        q|Q) echo "You are quitting!"
+            exit 1;;
+        s|S) echo "You are skipping this one!"
+            ;;
+        l|L|g|G)
+            echo "You are installing the library using '$repo_url'"
+            git clone "$repo_url"
+            if [ "$?" -eq 0 ]; then
+                cd "$repo_name"
+                make
+            else
+                echo "Failed to clone '$libname' from '$repo_url'"
+            fi
+            if [[ "$REPLY" =~ gG ]]; then
+                if [[ "$USER" == "root" ]]; then
+                    sudo make install
+                else
+                    echo "You must be root to use the global option."
+                fi
+            fi
+            ;;
+    esac
+}
+
+# default non-zero in case I absent-mindedly remove code that sets it:
+declare -i missing_count=1000
+# default exit code indicating failure
+declare -i ecode=1
 
 find_ldconfig
 check_libs
 
-echo "There are ${#missing_libs[*]} missing libraries"
+missing_count="${#missing_libs[*]}";
+
+while [ "$missing_count" -ne 0 ]; do
+    echo "There are $missing_count missing libraries"
+    echo "The install options for each library will be:"
+    echo "  'l' or local to install under this project"
+    echo "  'g' or global to install share library"
+    echo "  's' to skip"
+    echo "  'q' to quit"
+    echo
+    for lib in "${missing_libs[@]}"; do
+        install_missing_lib "$lib"
+    done
+
+    check_libs
+    missing_count="${#missing_libs[*]}";
+    if [ "$missing_count" -eq 0 ]; then
+        ecode=0
+        break
+    else
+        echo
+        echo "Some libraries were not installed.  Press any key to"
+        echo "try again, otherwise, press 'q' or Ctrl-C to quit."
+        read -n1
+        if [[ "$REPLY" =~ qQ ]]; then
+            break
+        fi
+    fi
+done
+
+# Final conditional sends exit code
+[ "$ecode" -eq 0 ]
