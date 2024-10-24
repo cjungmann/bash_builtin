@@ -69,7 +69,12 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
 
    AE_MAP map = INIT_MAP(items);
 
-   if (argeater_process(args, &map))
+   if (!argeater_process(args, &map))
+   {
+      (*ERROR_SINK)("Error process arguments.");
+      result = EXECUTION_FAILURE;
+   }
+   else
    {
       // Handle allocated resources (open stream) first
       // to ensure they are deallocated upon exit:

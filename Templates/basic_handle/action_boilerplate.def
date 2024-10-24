@@ -82,7 +82,12 @@ int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
    long_value = 0;
    file = NULL;
 
-   if (argeater_process(args, &TEMPLATE_boilerplate_arg_map))
+   if (!argeater_process(args, &TEMPLATE_boilerplate_arg_map))
+   {
+      (*ERROR_SINK)("Error process arguments.");
+      result = EXECUTION_FAILURE;
+   }
+   else
    {
       // Perform the action according to the submitted arguments.
 

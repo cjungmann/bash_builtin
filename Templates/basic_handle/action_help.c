@@ -67,7 +67,12 @@ int TEMPLATE_help(SHELL_VAR *sv_handle, ACLONE *args)
 
    verb_req = NULL;
 
-   if (argeater_process(args, &TEMPLATE_help_arg_map))
+   if (!argeater_process(args, &TEMPLATE_help_arg_map))
+   {
+      (*ERROR_SINK)("Error process arguments.");
+      result = EXECUTION_FAILURE;
+   }
+   else
    {
       if (verb_req)
       {
