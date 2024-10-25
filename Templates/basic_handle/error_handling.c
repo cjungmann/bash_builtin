@@ -18,7 +18,7 @@ void error_report_clear_shell_var(void)
       (*DISPOSE_SHELL_VAR)(sv);
 }
 
-void error_report_to_shell_var(const char *format, ...)
+int error_report_to_shell_var(const char *format, ...)
 {
    va_list args;
    va_start(args, format);
@@ -46,14 +46,17 @@ void error_report_to_shell_var(const char *format, ...)
          }
       }
    }
+
+   return len;
 }
 
-void error_report_to_stderr(const char *format, ...)
+int error_report_to_stderr(const char *format, ...)
 {
    va_list args;
    va_start(args, format);
-   fprintf(stderr, format, args);
+   int len = fprintf(stderr, format, args);
    va_end(args);
+   return len;
 }
 
 
