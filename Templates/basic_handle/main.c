@@ -15,7 +15,9 @@
 
 static int TEMPLATE_builtin(WORD_LIST *list)
 {
-   int  retval = EXECUTION_SUCCESS;
+   int retval = EXECUTION_SUCCESS;
+
+   argeater_set_error_sink(error_report_to_shell_var);
 
    if (list)
       retval = perform_verb(TEMPLATE_action_table, TEMPLATE_actions_count, list);
