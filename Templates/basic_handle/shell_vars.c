@@ -49,7 +49,9 @@ int install_payload_to_shell_var(SHELL_VAR **sv, const char *name, void *payload
    {
       local_dispose_variable_value(tsv);
       tsv->value = payload;
-      tsv->attributes |= att_special;
+      VSETATTR(tsv, att_special);
+      if (invisible_p(tsv))
+         VUNSETATTR(tsv, att_invisible);
 
       // Use is allowed to ignore the instance of a new shell_var
       // (success or failure indicated by exit code).
