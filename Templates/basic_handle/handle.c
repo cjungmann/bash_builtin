@@ -6,7 +6,7 @@
 
 bool TEMPLATE_p(SHELL_VAR *var)
 {
-   if (var && var->attributes & att_special)
+   if (var && specialvar_p(var))
       return (0 == strcmp((char*)var->value, TEMPLATE_HANDLE_ID));
 
    return false;
