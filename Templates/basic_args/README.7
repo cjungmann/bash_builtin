@@ -45,3 +45,11 @@ find . -type f -exec sed -i \(aqs/\c
 .Tword
 /newname/g' {} ';'
 .EE
+.PP
+or, if your directory is named for your project:
+
+.EX
+find . -type f -exec sed -i \(dqs/\c
+.Tword
+/\(Do(basename $PWD)/g\(dq {} ';'
+.EE
