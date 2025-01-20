@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+enable -f ./TEMPLATE TEMPLATE
+source TEMPLATE_sources.d/TEMPLATE_exit_on_error
+
+clear_screen() { echo $'\e[2J\e[1;1H'; }
+key_to_continue() { read -n1 -p Press\ any\ key\ to\ continue; }
+
+TEMPLATE help
+key_to_continue
+clear_screen
+
+
+
+TEMPLATE declare hname handle.c -v myvalue -n myname -f clear_screen
+TEMPLATE_exit_on_error
+
+declare RVAL=0
+echo "BEFORE: RVAL is $RVAL"
+TEMPLATE bogus hname RVAL
+TEMPLATE_exit_on_error
+echo "AFTER: RVAL is $RVAL"
