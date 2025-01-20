@@ -1,7 +1,6 @@
 TARGET_ROOT = TEMPLATE
-TARGET = $(TARGET_ROOT).so
+TARGET = $(TARGET_ROOT)
 BUILTIN = $(TARGET_ROOT)
-ENABLER = $(addprefix enable_,$(TARGET_ROOT))
 
 PREFIX ?= /usr/local
 
@@ -29,10 +28,6 @@ all: $(TARGET)
 $(TARGET) : $(MODULES)
 	$(CC) $(LFLAGS) -o $@ $(MODULES) $(LDFLAGS)
 
-$(ENABLER):
-	@echo "#!/usr/bin/env bash"                         > $(ENABLER)
-	@echo "echo -f $(PREFIX)/lib/$(TARGET) $(BUILTIN)" >> $(ENABLER)
-
 *.c: $(HEADERS)
 	@echo "Forcing full recompile after any header file change"
 	touch *.c
@@ -40,23 +35,20 @@ $(ENABLER):
 %o: %c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-install: $(ENABLER)
-	install -D --mode=775 $(ENABLER) $(PREFIX)/bin
-	install -D --mode=775 $(TARGET) $(PREFIX)/lib
+install:
+	install -D --mode=775 $(TARGET) -t $(PREFIX)/lib/bash
 	mkdir --mode=755 -p $(PREFIX)/share/man/man1
 	soelim $(TARGET_ROOT).1 | gzip -c - > $(PREFIX)/share/man/man1/$(TARGET_ROOT).1.gz
 	mkdir --mode=755 -p $(PREFIX)/share/man/man7
 	soelim $(TARGET_ROOT).7 | gzip -c - > $(PREFIX)/share/man/man7/$(TARGET_ROOT).7.gz
 
 uninstall:
-	rm -f $(PREFIX)/bin/$(ENABLER)
-	rm -f $(PREFIX)/lib/$(TARGET)
+	rm -f $(PREFIX)/lib/bash/$(TARGET)
 	rm -f $(PREFIX)/share/man/man1/$(TARGET_ROOT).1.gz
 	rm -f $(PREFIX)/share/man/man7/$(TARGET_ROOT).7.gz
- 
+
 clean:
 	rm -f $(TARGET)
-	rm -f $(ENABLER)
 	rm -f $(MODULES)
 
 help:
