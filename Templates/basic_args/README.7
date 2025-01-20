@@ -36,20 +36,12 @@ for a quick start on a minimal builtin service.
 The first thing to do is to replace all occurrences of the word
 .Tword
  with the command name you want for your new Bash builtin.
-The easiest way to do this is with
-.BR sed .
-Use the following invocation:
 .PP
-.EX
-find . -type f -exec sed -i \(aqs/\c
-.Tword
-/newname/g' {} ';'
-.EE
-.PP
-or, if your directory is named for your project:
+The best way to do this is to use the script
+.BR change_names :
 
+.RS
 .EX
-find . -type f -exec sed -i \(dqs/\c
-.Tword
-/\(Do(basename $PWD)/g\(dq {} ';'
+$ ./change_names \(Do( basename \(dq\(DoPWD\(dq )
 .EE
+.RE
