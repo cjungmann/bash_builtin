@@ -19,6 +19,8 @@ else
     else
         cd test
         ./change_names "$TARGET"
-        make
+        if ./configure; then
+            make
+        fi
     fi
 fi
