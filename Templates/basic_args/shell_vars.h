@@ -5,7 +5,8 @@
 
 typedef void (*dispose_shell_var_type)(SHELL_VAR *var);
 
-extern dispose_shell_var_type DISPOSE_SHELL_VAR; 
+extern dispose_shell_var_type DISPOSE_SHELL_VAR;
 
+void local_dispose_variable_value(SHELL_VAR *var);
 
 #endif
