@@ -72,7 +72,7 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
    if (!argeater_process(args, &map))
    {
       (*ERROR_SINK)("Error process arguments.");
-      result = EXECUTION_FAILURE;
+      exit_code = EXECUTION_FAILURE;
    }
    else
    {
@@ -122,8 +122,6 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
             fclose(file);
       }
    }
-   else
-      exit_code = EXECUTION_FAILURE;
 
    return exit_code;
 }

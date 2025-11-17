@@ -70,7 +70,7 @@ int TEMPLATE_help(SHELL_VAR *sv_handle, ACLONE *args)
    if (!argeater_process(args, &TEMPLATE_help_arg_map))
    {
       (*ERROR_SINK)("Error process arguments.");
-      result = EXECUTION_FAILURE;
+      exit_code = EXECUTION_FAILURE;
    }
    else
    {
