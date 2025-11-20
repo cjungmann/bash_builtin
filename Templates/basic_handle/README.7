@@ -26,6 +26,40 @@
 \- Hints for using this
 .tword
 directory for new projects
+.SH SYNOPSIS
+.PP
+In the
+.B basic_handle
+directory, creating project
+.IR newc :
+.RS 4
+.EX
+cp -r . ~/work/\fInewc\fP
+cd ~/work/\fInewc\fP
+.BI ./change_names " newc"
+.B ./configure
+.EE
+.RE
+.PP
+Update
+.BR handle.c ", " handle.h ", and " action_declare.c
+according to project needs.
+.PP
+New actions with:
+.RS 4
+.EX
+.BI ./spawn_action " new_action"
+.EE
+.RE
+.PP
+Then to build and install:
+.RS 4
+.EX
+make
+sudo make install
+.EE
+.RE
+
 .SH DESCRIPTION
 .PP
 This
@@ -164,7 +198,8 @@ Bash source code, and the
 uses them in
 .BR dispatcher.c .
 Besides the identified and casting functions, the
-.BR handle.c " and " handle.h file can and should be augmented with
+.BR handle.c " and " handle.h
+files can and should be augmented with
 code for initializing, destroying, and navigating handles.
 .SH REMOVING AN ACTION
 .PP
