@@ -10,13 +10,7 @@ TEMPLATE help
 key_to_continue
 clear_screen
 
-
-
-TEMPLATE declare hname handle.c -v myvalue -n myname -f clear_screen
+TEMPLATE declare HNAME "bogus string"
 TEMPLATE_exit_on_error
+echo "Successfully declared TEMPLATE handle HNAME."
 
-declare RVAL=0
-echo "BEFORE: RVAL is $RVAL"
-TEMPLATE bogus hname RVAL
-TEMPLATE_exit_on_error
-echo "AFTER: RVAL is $RVAL"
