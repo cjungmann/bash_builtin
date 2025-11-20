@@ -12,21 +12,17 @@ bool TEMPLATE_p(SHELL_VAR *var)
    return false;
 }
 
-int TEMPLATE_calc_handle_size(const char *name, const char *value, const char *callback)
+int TEMPLATE_calc_handle_size(const char *string)
 {
    int totsize = sizeof(TEMPLATEH);
-   totsize += get_string_saved_len(name);
-   totsize += get_string_saved_len(value);
-   totsize += get_string_saved_len(callback);
+   totsize += get_string_saved_len(string);
 
    return totsize;
 }
 
 TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
                                       int buffer_len,
-                                      const char *name,
-                                      const char *value,
-                                      const char *callback)
+                                      const char *string)
 {
    memset(buffer, 0, buffer_len);
    TEMPLATEH *handle = (TEMPLATEH*)buffer;
@@ -38,9 +34,7 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
    // skip past the handle struct
    cur_buff += sizeof(TEMPLATEH);
 
-   pack_string_in_block(&handle->data.name, &cur_buff, end_buff, name);
-   pack_string_in_block(&handle->data.value, &cur_buff, end_buff, value);
-   pack_string_in_block(&handle->data.callback, &cur_buff, end_buff, callback);
+   pack_string_in_block(&handle->data.string, &cur_buff, end_buff, string);
 
    assert(cur_buff == end_buff);
 

@@ -12,9 +12,7 @@
  * Add and remove struct members according to your needs
  */
 typedef struct TEMPLATE_data {
-   const char *name;
-   const char *value;
-   const char *callback;
+   const char *string;
 } D_TEMPLATE;
 
 typedef struct TEMPLATE_handle {
@@ -32,15 +30,11 @@ typedef struct TEMPLATE_handle {
  * strings saved in the TEMPLATE_data data.
  * @{
  */
-int TEMPLATE_calc_handle_size(const char *name,
-                              const char *value,
-                              const char *callback);
+int TEMPLATE_calc_handle_size(const char *string);
 
 TEMPLATEH * TEMPLATE_initialize_handle(char *buffer,
                                        int buffer_len,
-                                       const char *name,
-                                       const char *value,
-                                       const char *callback);
+                                       const char *string);
 
 /** @} */
 

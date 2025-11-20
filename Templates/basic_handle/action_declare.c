@@ -20,6 +20,7 @@
 // `argeater_process` function.
 static FILE *file;
 static const char *handle_name;
+static const char *string_arg;
 
 // Array of items that associate status variables to the means
 // to access them and text to be used in a help display:
@@ -28,7 +29,10 @@ AE_ITEM declare_actions[] = {
     "Name of new handle", NULL, argeater_string_setter },
 
    {(const char **)&file, "file", '\0', AET_ARGUMENT,
-    "File stream to read", NULL, TEMPLATE_argeater_stream_setter }
+    "File stream to read", NULL, TEMPLATE_argeater_stream_setter },
+
+   {&string_arg, "string", '\0', AET_ARGUMENT,
+    "Random string value", NULL, argeater_string_setter }
 };
 
 // File-scope instantiation of argument map to be used
@@ -43,33 +47,11 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
 {
    int exit_code = EXECUTION_FAILURE;
 
+   // Initialize global static variables used in argeater map:
    static const char *handle_name = NULL;
    static FILE *file = NULL;
 
-   static const char *name_arg = NULL;
-   static const char *value_arg = NULL;
-   static const char *callback_arg = NULL;
-
-   static AE_ITEM items[] = {
-      {&handle_name, "handle_name", '\0', AET_ARGUMENT,
-       "Name of new handle", NULL, argeater_string_setter },
-
-      {(const char **)&file, "file", '\0', AET_ARGUMENT,
-       "File stream to read", NULL, TEMPLATE_argeater_stream_setter },
-
-      {&name_arg, "generic_name", 'n', AET_VALUE_OPTION,
-       "some name", NULL, argeater_string_setter },
-
-      {&value_arg, "generic_value", 'v', AET_VALUE_OPTION,
-       "some value", NULL, argeater_string_setter },
-
-      {&callback_arg, "callback_function", 'f', AET_VALUE_OPTION,
-       "script function", NULL, TEMPLATE_argeater_function_setter}
-   };
-
-   AE_MAP map = INIT_MAP(items);
-
-   if (!argeater_process(args, &map))
+   if (!argeater_process(args, &TEMPLATE_declare_arg_map))
    {
       (*ERROR_SINK)("Error process arguments.");
       exit_code = EXECUTION_FAILURE;
@@ -84,16 +66,12 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
       {
          if (handle_name)
          {
-            int hlen = TEMPLATE_calc_handle_size(name_arg,
-                                                 value_arg,
-                                                 callback_arg);
+            int hlen = TEMPLATE_calc_handle_size(string_arg);
+
             char *buff = xmalloc(hlen);
             if (buff)
             {
-               TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen,
-                                                          name_arg,
-                                                          value_arg,
-                                                          callback_arg);
+               TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen, string_arg);
 
                if (th)
                {
