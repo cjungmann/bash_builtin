@@ -18,7 +18,6 @@
 // command-line argument settings after the argument map
 // to which they are attached is used by argeater's
 // `argeater_process` function.
-static FILE *file;
 static const char *handle_name;
 static const char *string_arg;
 
@@ -27,9 +26,6 @@ static const char *string_arg;
 AE_ITEM declare_actions[] = {
    {&handle_name, "handle_name", '\0', AET_ARGUMENT,
     "Name of new handle", NULL, argeater_string_setter },
-
-   {(const char **)&file, "file", '\0', AET_ARGUMENT,
-    "File stream to read", NULL, TEMPLATE_argeater_stream_setter },
 
    {&string_arg, "string", '\0', AET_ARGUMENT,
     "Random string value", NULL, argeater_string_setter }
@@ -48,8 +44,8 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
    int exit_code = EXECUTION_FAILURE;
 
    // Initialize global static variables used in argeater map:
-   static const char *handle_name = NULL;
-   static FILE *file = NULL;
+   handle_name = NULL;
+   string_arg = NULL;
 
    if (!argeater_process(args, &TEMPLATE_declare_arg_map))
    {
@@ -58,47 +54,33 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
    }
    else
    {
-      // Handle allocated resources (open stream) first
-      // to ensure they are deallocated upon exit:
-      if (file==NULL)
-         (*ERROR_SINK)("TEMPLATE:declare failed to open required file");
-      else
+      if (handle_name)
       {
-         if (handle_name)
+         int hlen = TEMPLATE_calc_handle_size(string_arg);
+
+         char *buff = xmalloc(hlen);
+         if (buff)
          {
-            int hlen = TEMPLATE_calc_handle_size(string_arg);
+            TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen, string_arg);
 
-            char *buff = xmalloc(hlen);
-            if (buff)
+            if (th)
             {
-               TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen, string_arg);
-
-               if (th)
-               {
-                  SHELL_VAR *newsv = NULL;
-                  exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
-               }
-               else
-               {
-                  (*ERROR_SINK)("TEMPLATE:handle initialization failed");
-                  free(buff);
-                  buff = NULL;
-               }
+               SHELL_VAR *newsv = NULL;
+               exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
             }
             else
-               (*ERROR_SINK)("TEMPLATE:out-of-memory while allocating handle");
+            {
+               (*ERROR_SINK)("TEMPLATE:handle initialization failed");
+               free(buff);
+               buff = NULL;
+            }
          }
          else
-            (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
-
-         // Use the open stream, 'file', then close it before
-         // exiting 'declare' to prevent leaving open handles
-         // upon an unexpected termination:
-
-         // collect_info_from_file(file);
-         if (file != stdin)
-            fclose(file);
+            (*ERROR_SINK)("TEMPLATE:out-of-memory while allocating handle");
       }
+      else
+         (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
+
    }
 
    return exit_code;
