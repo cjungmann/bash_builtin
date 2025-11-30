@@ -109,8 +109,6 @@ int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
          retval->value = p;
       }
    }
-   else
-      exit_code = EXECUTION_FAILURE;
 
    return exit_code;
 }
