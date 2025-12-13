@@ -1,0 +1,58 @@
+.SH ATTRIBUTES
+.PP
+Alongside the
+.BR value ,
+the
+.B attributes
+member is the most influential of the
+.B SHELL_VAR
+object.
+It codes data-type as well as the access rules of a given
+SHELL_VAR.
+
+.B IMPORTANT:
+The attribute settings are a contract, not a guardrail.  There is
+nothing to prevent inappropriate access or changes to a SHELL_VAR
+in a builtin command.  It is the responsibility of the developer
+to understand and conform to the expectations implied by the
+.B attributes
+value.
+.SS ATTRIBUTE RESOURCES
+.PP
+The header file
+.B variables.h
+contains resources for interacting with the
+.B attributes
+member.
+.TP
+.B Bitmap Values
+The inventory of
+.B attributes
+values are macros with a single bit set to indicate a value.
+The first attribute value macro is
+.BR att_exported .
+.TP
+.B Attribute Tests
+There are several macros that can be used to test for the
+presence of a bitmapped value.
+For example, using
+.B exported_p
+will detect the the
+.B att_exported
+value is set.
+.TP
+.B Bitmap Setters
+There are several macros that manipulate the
+.B attributes
+bitmap, the most useful of which are
+.BR VSETATTR " and " VUNSETATTR .
+They both take two arguments,
+.BR var " and " attr ,
+and set or unset the bitmap value as indicated by
+the name.
+.IP
+.EX
+if (invisible_p(sv))
+   VUNSETATTR(sv, att_invisible);
+.EE
+

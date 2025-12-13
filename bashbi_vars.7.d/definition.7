@@ -1,0 +1,58 @@
+.SH SHELL_VAR
+.PP
+The
+.B SHELL_VAR
+is the Bash shell variable data type.
+The following definition is found in
+.BR variables.h :
+.PP
+.B typedef struct
+.I variable
+{
+.br
+.sh
+.RS 4
+.format_line "char                 " * name ;
+.format_line "char                 " * value ;
+.format_line "char                 " * exportstr ;
+.format_line "sh_var_value_func_t  " * dynamic_value ;
+.format_line "sh_var_assign_func_t " * assign_value ;
+.format_line "int                  " " " attributes ;
+.format_line "int                  " " " context ;
+.RE
+}
+.BR SHELL_VAR ;
+.SS SHELL_VAR DATA MEMBERS
+.PP
+.TP
+.I name
+symbol that the user types
+.TP
+.I value
+value that is returned
+.TP
+.I exportstr
+string for the environment
+.TP
+.I dynamic_value
+function called to return a \(aqdynamic\(aq value
+for a variable, like
+.BR \(DoSECONDS " or " \(DoRANDOM .
+.TP
+.I assign_value
+function called when this \(aqspecial variable\(aq
+is assigned a value in
+.BR bind_variable .
+.TP
+.I attributes
+Union of attribute values like
+.BR att_export ", " att_readonly ", " att_array ", etc."
+View the complete list of attributes with a search for the
+first,
+.IR att_export ,
+in the include file,
+.BR  variables.h .
+.TP
+.I context
+which context (scope) this variable belongs to
+

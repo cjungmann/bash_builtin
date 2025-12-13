@@ -1,0 +1,15 @@
+.SH DESCRIPTION
+.PP
+Most Bash builtins will need to read, write, and sometimes create
+shell variables.  This document will show the internal structure of
+the shell variable, then it will describe categories of variable
+access functions and where to find the prototypes.
+.PP
+If the
+.B bash-builtins
+package is installed, there will be a
+.B bash
+directory that contains header files for compiling Bash builtin
+commands.  Most of the content on this page will be found in the
+.B variables.h
+header file in that directory.

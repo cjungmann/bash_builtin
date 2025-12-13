@@ -1,0 +1,46 @@
+.TH bashbi 7 2025-12-06
+.SH NAME
+.B bashbi
+\- bash_builtin project coding guide
+.SH DESCRIPTION
+.PP
+This is an entry-point for Bash builtin man page references.
+.PP
+Since it is needed to develop Bash builtins, it is assumed
+that the Bash builtins development package,
+.B bash-builtins
+is installed.  It is further assumed that the header files of
+.B bash-builtins
+are found in
+.IR /usr/include/bash .
+Adjust your search directory if your installation differs from
+this assumption.
+.PP
+Topics will be covered in pages with
+.B bashbi_
+prefixes.
+.SH TOPICS
+.TP
+.BR bashbi_vars (7)
+Structure of
+.B SHELL_VAR
+from
+.IR variables.h ,
+along with a summary of important variable manipulation
+functions.
+.TP
+.BR bashbi_functions (7)
+Discussion of Bash accessing builtin functions as well as
+accessing Bash script functions from the C code from which builtins
+are built.
+.TP
+.BR bashbi_collections (7)
+.IR "Comming Attraction" :
+References to help construct various Bash collections, from script
+declared
+.BR ARRAY " and " HASH_TABLE
+(associative arrays), to
+.BR WORD_LIST ,
+which is a linked-list of strings that is how Bash passes arguments
+to compliant bash functions, including script functions and Bash
+builtins.
