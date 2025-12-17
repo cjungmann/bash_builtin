@@ -1,121 +1,144 @@
 .TH
 .SH ATTRIBUTES
 .PP
-Alongside the
-.BR value ,
-the
+The
 .B attributes
-member is the most influential of the
-.B SHELL_VAR
-object.
-It codes data-type as well as the access rules of a given
-SHELL_VAR.
-
-.B IMPORTANT:
-The attribute settings are a contract, not a guardrail.  There is
-nothing to prevent inappropriate access or changes to a SHELL_VAR
-in a builtin command.  It is the responsibility of the developer
-to understand and conform to the expectations implied by the
+data member is the blueprint of the variable.  It codes
+information about the data type, access, and allowed values.
+.PP
+When a
+.B SHELL_VAR is being used in a shell script, the details of the
+blueprint are enforced by the runtime environment.  A Bash builtin
+.I could
+violate every rule in the blueprint.  The developer is responsible
+for ensuring the actions of a builtin respect the conditions set out
+by the
 .B attributes
 value.
+.SS ATTRIBUTE BIT FLAGS
+.PP
+The value of each bit flag is a 1 value in a single bit position
+of an integer variable.  The
+.B attributes
+bit flag values are enumerated and named in the header file
+.BR variables.h .
 .SS ATTRIBUTE RESOURCES
 .PP
-The header file
+The
 .B variables.h
-contains resources for interacting with the
-.B attributes
-member.
+header file includes macros that enable a developer to recognize
+and manage the attribute flags.
 .TP
-.B Bit Flag Values
-The collection of
-.B attributes
-bit flag macros values are macros with a single bit set to indicate a value.
-The first attribute value macro is
-.BR att_exported .
-.TP
-.B Attribute Tests
-There are several macros that can be used to test if a given bit
-flag value is set.
-For example, using
-.B exported_p
-will detect the the
+.B Testing Macros
+Macros that end with a
+.B _p
+suffix test for the value of a single flag.  The first example in
+.B variables.h
+is
+.BR exported_p ,
+which indicates if the
 .B att_exported
-bit flag value is set.
+flag is set.
 .TP
-.B Bit Flag Setters
-There are several macros that manipulate bits of the
-.B attributes
-bit field, the most useful of which are
+.B Casting Macros
+Macros that end with a
+.B _cell
+cast the
+.BR SHELL_VAR :: value
+to an approriate pointer for access to the data.
+.TP
+.B Flag-setting Macros
+There are also some flag-setting macros.  The most useful are
 .BR VSETATTR " and " VUNSETATTR .
-They both take two arguments,
-.BR var " and " attr ,
-and set or unset the bit flag value as indicated by
-the name.
+.TP
+.B Resources Example
+As explained below, it is important to clear the invisible flag
+if the
+.BR SHELL_VAR :: value
+is set or changed:
 .IP
 .EX
 if (invisible_p(sv))
    VUNSETATTR(sv, att_invisible);
 .EE
-.SS ATTRIBUTE BIT FLAG CATEGORIES
+.SS USER-VISIBLE ATTRIBUTES
 .PP
-The following tables group related attribute bit flags:
-.PP
-.B USER-SETTABLE ATTRIBUTES
-.PP
-The following attributes are set when the variable is
-declared in the script:
+This is a class of attribute flags that are set by the user or
+developer when declaring the variable.
+.TP
+.B Data Type Bit Flags
 .TS
 tab(|);
-cb s
-l l.
-Data type bit flags
+lb l lx.
 att_integer|-i
-att_array|-a
-att_assoc|-A
+att_array|-a|collection of values accessed by integer indexes
+att_assoc|-A|collection of values accessed by string keys
 att_function|-f
-att_nameref|-n
+att_nameref|-n|indirect access to the named variable
 .TE
-.PP
-Data type bit flags are mutually-exclusive.  If no data type
-bit flags are set,
-.B value
-should be treated as a simple character string.
-.PP
+.TP
+.B Data Access Bit Flags
 .TS
 tab(|);
-cb s
-l l lx.
-Modified Assignment bit flags
-att_lowercase|-u|on assignment, convert string to lowercase
-att_uppercase|-u|on assignment, convert string to uppercase
-att_capcase|-c|T{
-On assignment, lowercase everything except for the first letter
-of the first word in the assigned string
-T}
-att_exported|-x|export variable/function to subshells
-att_readonly|-r|cannot change value
+lb l lx.
+att_exported|-x|to be made available to sub-processes
+att_readonly|-r|changes prevented in script, prohibited in builtin
 att_local||T{
-set by using the
+declare with the
 .B local
-command
+keyword
 T}
-att_trace|-t|named function is traced with DEBUG trap
 .TE
-.PP
-.B INTERNAL ATTRIBUTES
-.PP
-The follwoing attributes are set by the system.  They cannot
-be set or read by a Bash script.
+.TP
+.B Data Constraint Bit Flags
 .TS
 tab(|);
-l lx.
-att_invisible|cannot see
-att_nounset|cannot unset
-att_noassign|cannot assign
-att_imported|came from environment
-att_special|requires special handling
-att_nofree|do not free on unset (copied pointer?)
-att_regernerate|regenerate when exported
-att_tempvar|came from temp environment
-att_propagate|propagate to previous scope
+lb l lx.
+att_integer|-i|integer value enforced, but saved as a string
+att_lowercase|-l|T{
+transform string assignments to all upper-case characters
+T}
+att_uppercase|-u|T{
+transform string assignments to all lower-case characters
+T}
+att_capcase|-c|T{
+transform string assignments to all lower-case EXCEPT the
+first character of the first word, which will be upper-case.
+T}
 .TE
+.SS INTERNAL ATTRIBUTES
+.PP
+This class of attribute flags are set by the Bash runtime
+environment to communicate appropriate handling of the variable.
+.PP
+The notes below that are enclosed in double-quotes have been copied
+verbatim from
+.BR variables.h .
+I haven't explored them sufficiently to confirm my intuititions about
+them.
+.TE
+.TS
+tab(|);
+lb lx.
+att_invisible|T{
+This flag is set when a variable is declared in a script but
+not assigned a value.  Its value is inaccessible.
+.BR IMPORTANT :
+this flag must be
+.B unset
+in a Bash builtin if the value is set, or the user or script will
+not be able to access it.
+T}
+att_nounset|\(dqcannot unset\(dq
+att_noassign|\(dqassignment not allowed\(dq
+att_imported|\(dqcame from environment\(dq
+att_special|\(dqrequires special handling\(dq
+att_nofree|\(dqdo not free value on unset\(dq
+att_regenerate|\(dqregenerate when exported\(dq
+att_tempvar|\(dqvariable came from the temp environment\(dq
+att_propagate|\(dqpropagate to previous scope\(dq
+.TE
+
+
+
+
