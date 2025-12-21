@@ -1,0 +1,104 @@
+// -*- mode:c -*-
+
+#include <bash/builtins.h>
+#ifndef EXECUTION_FAILURE
+#include <bash/shell.h>
+#endif
+
+extern int execute_command PARAMS((COMMAND *));
+
+#include <stdio.h>
+
+#include <stdarg.h>
+const char error_name[] = "TEMPLATE_ERROR";
+
+/**
+ * @brief Report error details to a shell var for script use.
+ */
+int printf_to_shell_var(const char *format, ...)
+{
+   va_list list_args;
+   va_start(list_args, format);
+
+   int ccount = vsnprintf(NULL, 0, format, list_args);
+   va_end(list_args);
+
+   if (ccount>0)
+   {
+      ++ccount;
+
+      char *buff = (char*)xmalloc(ccount);
+      if (buff)
+      {
+         va_start(list_args, format);
+         vsnprintf(buff, ccount, format, list_args);
+         va_end(list_args);
+
+         bind_variable(error_name, buff, 0);
+
+         xfree(buff);
+      }
+   }
+
+   return ccount;
+}
+
+/**
+ * @brief Call to clear TEMPLATE_ERROR if it's in use
+ */
+void drain_error_sink(void)
+{
+   SHELL_VAR *sv = find_variable(error_name);
+   if (sv)
+      unbind_variable(error_name);
+}
+
+/*
+ * Uncomment only one of the following for error reporting.
+ * Use 'printf_to_shell_var' to put error message in a variable,
+ * otherwise use 'printf' to immediately print error messages:
+ *
+ * On formatting error messages:
+ *   - Don't include a trailing newline if you are using
+ *     'printf_to_shell_var' because the script should decide
+ *     how the error output will be formatted.
+ */
+int (*ERROR_SINK)(const char *format, ...) = printf_to_shell_var;
+// int (*ERROR_SINK)(const char *format, ...) = printf;
+
+
+static int TEMPLATE_builtin(WORD_LIST *list)
+{
+   int  retval = EXECUTION_SUCCESS;
+   drain_error_sink();
+
+   printf("Hello from Bash builtin 'TEMPLATE'.\n");
+
+   return retval;
+}
+
+static char *desc_TEMPLATE[] = {
+   "TEMPLATE - My Bash builtin",
+   "",
+   "Use Bash builtin 'TEMPLATE' to do cool stuff.",
+   (char *)NULL
+};
+
+struct builtin TEMPLATE_struct = {
+   .name      = "TEMPLATE",
+   .function  = TEMPLATE_builtin,
+   .flags     = BUILTIN_ENABLED,
+   .long_doc  = desc_TEMPLATE,
+   .short_doc = "TEMPLATE [arguments]",
+   .handle    = 0
+};
+
+
+/* Local Variables:                       */
+/* compile-command: "gcc                 \*/
+/*    -std=c99 -Wall -Werror -ggdb -fPIC \*/
+/*    --shared                           \*/
+/*    -I /usr/include/bash/include       \*/
+/*    -o TEMPLATE.so TEMPLATE.c"    */
+/* End:                                   */
+
