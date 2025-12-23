@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-enable -f ./TEMPLATE.so TEMPLATE
+enable -f ./TEMPLATE TEMPLATE
 
 TEMPLATE
 if [ "$?" -eq 0 ]; then
     echo "TEMPLATE ran successfully."
 else
     printf "There was an error running TEMPLATE:\n"
-    printf "\033[31;1m%s\033[39;22m\n" "$BOGUS_ERROR"
+    printf "\033[31;1m%s\033[39;22m\n" "$TEMPLATE_ERROR"
 fi
 
 
