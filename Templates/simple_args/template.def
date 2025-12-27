@@ -11,7 +11,8 @@ extern int execute_command PARAMS((COMMAND *));
 
 #include <stdio.h>
 #include <stdarg.h>
-const char error_name[] = "TEMPLATE_ERROR";
+static const char *error_name = "TEMPLATE_ERR";
+static const char *value_name = "TEMPLATE_VAL";
 
 /**
  * @brief Report error details to a shell var for script use.
@@ -60,6 +61,16 @@ void drain_error_sink(void)
       unbind_variable(error_name);
 }
 
+/**
+ * @brief Clear TEMPLATE_VAL before each call
+ */
+void clear_result_value(void)
+{
+   SHELL_VAR *sv = find_variable(value_name);
+   if (sv)
+      unbind_variable(value_name);
+}
+
 /*
  * Uncomment only one of the following for error reporting.
  * Use 'printf_to_shell_var' to put error message in a variable,
@@ -77,11 +88,19 @@ int (*ERROR_SINK)(const char *format, ...) = printf_to_shell_var;
 #include <alloca.h>
 
 static const char *help_flag = NULL;
+static const char *errmsg = NULL;
 
 AE_ITEM actions[] = {
    { &help_flag, "help", 'h', AET_FLAG_OPTION,
      "Show usage instructions", NULL,
      argeater_string_setter },
+
+   { &value_name, "value", 'v', AET_VALUE_OPTION,
+     "Change value name", NULL,
+     argeater_string_setter },
+
+   { &errmsg, "error message", 'e', AET_VALUE_OPTION,
+     "Set fake error message" }
 };
 
 void show_usage(AE_MAP *map)
@@ -96,6 +115,10 @@ static int TEMPLATE_builtin(WORD_LIST *list)
 {
    int  retval = EXECUTION_FAILURE;
    drain_error_sink();
+   clear_result_value();
+
+   help_flag = NULL;
+   errmsg = NULL;
 
    ACLONE *clones = CLONE_WORD_LIST(list);
    AE_MAP map = INIT_MAP(actions);
@@ -109,7 +132,14 @@ static int TEMPLATE_builtin(WORD_LIST *list)
          goto early_exit;
       }
 
-      printf("Hello from Bash builtin 'TEMPLATE'.\n");
+      if (errmsg)
+      {
+         (*ERROR_SINK)("Contrived error message is '%s'", errmsg);
+         goto early_exit;
+      }
+
+      bind_variable(value_name, "Hello from Bash builtin.", 0);
+
       retval = EXECUTION_SUCCESS;
    }
 
