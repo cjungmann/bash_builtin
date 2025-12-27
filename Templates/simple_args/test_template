@@ -2,12 +2,28 @@
 
 enable -f ./TEMPLATE TEMPLATE
 
-TEMPLATE
+echo
+printf '\e[36;1mAbout to test the \e[39m-h\e[36m flag:\e[39;22m\n'
+TEMPLATE -h
+echo
+
+declare value_name="bval"
+printf '\e[36;1mAbout to test with option \e[39m-v %s\e[36m:\e[39;22m\n' "$value_name"
+TEMPLATE -v "$value_name"
+printf "The result value is '\e[32;1m%s\e[39;22m'.\n" "${!value_name}"
+echo
+
+declare emsg="Arbitrary error message"
+printf '\e[36;1mAbout to test with option \e[39m-e "%s"\e[36m:\e[39;22m\n' "$emsg"
+TEMPLATE -e "$emsg"
 if [ "$?" -eq 0 ]; then
     echo "TEMPLATE ran successfully."
+    printf "The result value is '%s'.\n" "$bval"
 else
+    declare raw_error_name="TEMPLATE_ERR"
+    declare -n err_msg="${raw_error_name^^}"
     printf "There was an error running TEMPLATE:\n"
-    printf "\033[31;1m%s\033[39;22m\n" "$TEMPLATE_ERROR"
+    printf "\033[31;1m%s\033[39;22m\n" "$err_msg"
 fi
 
 
