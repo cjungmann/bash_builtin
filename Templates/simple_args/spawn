@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+if [ "$#" -lt 1 ]; then
+    cat <<EOF
+This script requires an argument that will be used for the
+builtin name as well as the root of the source file name.
+EOF
+    exit 1
+fi
+
+declare name="$1"
+declare c_name="${name}.c"
+declare -u error_name="${name}_error"
+
+if [ -f "$c_name" ]; then
+    printf "Source file '$c_name' already exists, aborting conversion.\n"
+    printf "Remove '$c_name' first if it is meant to be replaced.\n"
+    exit 1
+elif ! [ -f template.def ]; then
+    printf "Raw template file is missing.\n"
+    exit 1
+fi
+
+printf "Converting 'template.def' to '%s'.\n" "$c_name"
+printf "Defining the error string name: %s.\n" "$error_name"
+sed 's/TEMPLATE_ERROR/'"$error_name"'/g' template.def > "$c_name"
+
+printf "Converting instances of TEMPLATE in 'template.def' to '$name'.\n"
+sed  -i 's/TEMPLATE/'"$1"'/g' "$c_name"
+
+printf "Converting test_TEMPLATE to test_${1}\n"
+printf "Converting instances of TEMPLATE in 'test_TEMPLATE' to '$name'.\n"
+sed 's/TEMPLATE/'"$1"'/g' test_template > "$1_test"
+chmod a+x "$1_test"
+
+
+exit
