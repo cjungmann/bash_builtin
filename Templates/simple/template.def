@@ -5,15 +5,22 @@
 #include <bash/shell.h>
 #endif
 
+// Create access to an otherwise unavailable function
+// that executes script functions:
 extern int execute_command PARAMS((COMMAND *));
 
 #include <stdio.h>
-
 #include <stdarg.h>
 const char error_name[] = "TEMPLATE_ERROR";
 
 /**
  * @brief Report error details to a shell var for script use.
+ *
+ * Leaving the error message in a shell variable permits
+ * detailed and specific error information and the ability
+ * of a script to decide whether and how to respond to an
+ * error.
+ * 
  */
 int printf_to_shell_var(const char *format, ...)
 {
@@ -94,11 +101,13 @@ struct builtin TEMPLATE_struct = {
 };
 
 
-/* Local Variables:                       */
-/* compile-command: "gcc                 \*/
-/*    -std=c99 -Wall -Werror -ggdb -fPIC \*/
-/*    --shared                           \*/
-/*    -I /usr/include/bash/include       \*/
-/*    -o TEMPLATE.so TEMPLATE.c"    */
-/* End:                                   */
+// Setup for compiling in Emacs:
+
+/* Local Variables:                 */
+/* compile-command: "gcc           \*/
+/*    -std=c99 -Wall -Werror -ggdb \*/
+/*    -fPIC --shared               \*/
+/*    -I /usr/include/bash/include \*/
+/*    -o TEMPLATE TEMPLATE.c"       */
+/* End:                             */
 
