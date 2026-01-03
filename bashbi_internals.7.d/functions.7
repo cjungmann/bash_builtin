@@ -1,0 +1,53 @@
+.if !(\n[main_page] = 1) .TH
+.SH FUNCTIONS
+.PP
+A collection of Bash environment functions.
+.TP
+.BR create_array ()
+Create an empty free-standing
+.B ARRAY
+variable.  Can be used for concatenating a set of strings.
+.TP
+.B array_to_string \c
+.RB (ARRAY " *array, " char " *separator, " bool " quoted" )
+Generates a new string with the concatenated elements of the
+array, using the
+.B separator
+value as the delimiter.
+.SS Rogue Prototypes
+.PP
+.B Rogue prototypes
+are prototypes of non-public functions.  The rogue prototypes provide
+access to useful functions that are not found in the header files in
+.BR /usr/include/bash .
+.PP
+When rogue prototypes are necessary, the source file from which the
+prototype is copied will be provided.
+As a point of reference, the root of the Bash source files will be
+indicated as
+.BR  bash_src.
+Replace
+.B bash_src
+with the path to the Bash source files on your system.
+.TP
+.BR itos ", " uitos ", " inttostr ", and " uinttostr
+These functions are found in
+.BR bash_src/lib/sh/itos.c .
+.RS 8
+.TP
+.B extern char *itos(int val)
+.TQ
+.B extern char *uitos(unsigned val)
+These functions return a xmalloc string conversion of the integer value.
+The returned memory must be freed to avoid a leak.
+.TP
+.B extern char *inttostr(int val, char *buff, int buff_len)
+.TQ
+.B externchar *uinttostr(unsigned val, char *buff, int buff_len)
+These functions use caller-provided memory, whose disposition
+is also up to the caller.
+.TP
+.B extern int execute_command PARAMS((COMMAND *cmd));
+Calls a script function as described in the
+.B COMMAND
+object.

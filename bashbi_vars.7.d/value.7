@@ -1,0 +1,61 @@
+.\"  -*- mode:groff -*-
+.TH
+.SH VALUE
+.PP
+The
+.B value
+data member of the
+.B SHELL_VAR
+is a pointer to data that may or may not be a character
+string.
+.PP
+For two data types, the
+.BR array " and the " "associative array" ,
+the
+.B value
+member must be cast to the appropriate pointer type
+to access the data.
+For the other data types,
+.B value
+is a character string, either as a value or as a named reference
+to another Bash object.
+.PP
+The data type is indicated in the
+.B attributes
+data member.
+See the
+.B Data Type Bit Flags
+section below.
+
+
+
+
+
+.PP
+The significance of the
+.B value
+member is determined by the data type settings of the
+.B attributes
+member (see
+.B Data Type Bit Flags
+below).
+.PP
+For data types
+.BR att_array " and " att_assoc ,
+.B  value
+is a pointer to the appropriate data type.
+Access the resource by casting
+.B value
+to
+.BR ARRAY " or " HASH_TABLE ,
+or by using macros
+.BR array_cell " or " assoc_cell .
+.PP
+For all other data types,
+.B value
+is a character string value.
+If the data type is
+.BR att_function " or " att_nameref ,
+the value is the name of the resource (find it with
+.BR find_function " or " find_variable ),
+otherwise it's just a string value.

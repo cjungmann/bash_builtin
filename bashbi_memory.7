@@ -1,0 +1,29 @@
+.TH bashbi_memory 7 2025-12-29
+.SH NAME
+.B bashbi_memory
+/- in which memory strategies and warnings are discussed
+.SH DESCRIPTION
+.PP
+In general, heap memory is checked out (alloc, new) from a large
+memory pool, where a pointer to the fresh memory is passed to the
+requesting code.  The pointer remains valid until the memory is
+checked back in (free, delete).  Returned memory can be immediately
+lent out again and changed.  One cannot predict how the memory will
+be used, so the outcome of attempting to access memory from an
+invalid pointer is
+.IR undefined .
+.PP
+While Bash handles the lifetimes of
+.BR SHELL_VAR s,
+developers must be carefully congnizant of the origins and proper
+disposition of other memory objects.
+.PP
+For functions like
+.B  savestring
+and hidden functions
+.BR itos ", " uitos ", " inttostr ", and " uinttostr ,
+the
+.B char*
+return value will have been allocated on the heap and the
+responsibility for disposal given, at least temporarily, to
+the caller of these functions.

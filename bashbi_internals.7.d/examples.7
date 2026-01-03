@@ -1,0 +1,53 @@
+.if !(\n[main_page] = 1) .TH
+.SH EXAMPLES
+.SS SIMPLE COPY STRING
+.PP
+.EX
+   char *tstring = savestring("bogus string");
+   xfree(tstring);
+.EE
+.SS INTEGER TO STRING
+.PP
+.B Integer to string with snprintf:
+.RS 4
+.EX
+int len = snprintf(NULL, 0, \(dq%d\(dq, val);
+char *buff = (char*)xmalloc(len+1);
+snprintf(buff, len+1, \(dq%d\(dq, val);
+use_string(buff);
+free(buff);
+.EE
+.RE
+.PP
+.B Integer to string with hidden Bash function
+.RS 4
+.EX
+extern char *itos(int val);
+char *converted = itos(256);
+use_string(converted);
+xfree(converted);
+.EE
+.RE
+.SS CONCATENTATE MULTIPLE STRINGS
+.TP
+.B Create a comma-separated string of integer values
+.EX
+extern char *itos(int val);
+int array[] = { 1, 2, 3, 4, 5 };
+ARRAY *arr = create_array();
+if (arr)
+{
+   int *ptr = array;
+   int *end = ptr + sizeof(array)/sizeof(array[0]);
+   for (; ptr < end; ++ptr)
+   {
+      char *istr = itos(*ptr);
+      array_insert(arr, arr->num_elements+1, istr);
+      xfree(istr);
+   }
+
+   char *result = array_to_string(arr, ",", 0);
+   use_string(result);
+   xfree(result);
+}
+.EE

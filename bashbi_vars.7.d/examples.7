@@ -1,0 +1,34 @@
+.TH
+.SH EXAMPLES
+.TP
+.B Test and manage attribute flags
+.EX
+if (invisible_p(sv))
+   VUNSETATTR(sv, att_invisible);
+.EE
+.TP
+.B Casting Variables
+.EX
+if (array_p(sv_array && sv_array->value))
+{
+   ARRAY *arr = array_cell(sv_array);
+   work_with_array(arr);
+}
+
+if (assoc_p(sv_assoc) && sv_assoc->value)
+{
+   HASH_TABLE *htable = assoc_cell(sv_assoc);
+   work_with_hash(htable);
+}
+
+if (function_p(sv_func) && sv_func->value)
+{
+   COMMAND *cmd = function_cell(sv_func));
+   work_with_command(cmd);
+}
+.EE
+.TP
+.B Setting a String Value
+.EX
+
+.EE

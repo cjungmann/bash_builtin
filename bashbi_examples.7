@@ -1,0 +1,225 @@
+.TH  bashbi_methods 7 2025-12-28
+.de p_savestring
+.  RB "char* " savestring \c
+.  RI "(char *" string );
+.  br
+..
+.de p_array_create
+.  RB "ARRAY* " array_create \c
+.  RI ( void );
+.  br
+..
+.de p_array_insert
+.  RB "int " array_insert \c
+.  RI "(ARRAY* " array ", intmax_t " index ", char* " value );
+.  br
+..
+.de p_array_to_string
+.  RB "char* " array_to_string \c
+.  RI "(ARRAY* " array ", char* " separator ", bool " quoted );
+.  br
+..
+.de p_array_dispose
+.  RB "void " array_dispose \c
+.  RI "(ARRAY* " array );
+.  br
+..
+
+.de p_dispose_variable_value
+.  RB "static void " dispose_variable_value \c
+.  RI "(SHELL_VAR* " var );
+.  br
+..
+.de p_dispose_variable
+.  RB "void " dispose_variable \c
+.  RI "(SHELL_VAR* " var );
+.  br
+..
+.de p_unbind_variable
+.  RB "int " unbind_variable \c
+.  RI "(const char* " name );
+.  br
+..
+.de p_itos
+.  RB "extern char * " itos \c
+.  RI "(int " value );
+.  br
+..
+.de p_uitos
+.  RB "extern char * " uitos \c
+.  RI "(unsigned int " value );
+.  br
+..
+.de p_execute_command
+.  RB "extern int " execute_command \c
+.  RI "(COMMAND* " cmd );
+.  br
+..
+.SH NAME
+.B bashbi_methods
+\- a targeted briefing of the Bash API
+.SH SYNOPSIS
+.SS BUILDING WITH STRINGS
+.p_savestring
+.p_array_create
+.p_array_insert
+.p_array_to_string
+.p_array_dispose
+.SS DISMANTLING VARIABLES
+.p_dispose_variable_value
+.p_dispose_variable
+.p_unbind_variable
+.SS UNDOCUMENTED
+.p_itos
+.p_uitos
+.p_execute_command
+.SH DESCRIPTION
+.PP
+Lacking any formal or organized documentation, it is easy to get
+lost in the vast scope of functions available to a developer of Bash
+builtins.  This document highlights a few functions to serve as a
+quick usage reference.  It also hopes to remind developers to search
+the Bash API for existing programming solutions before making a
+bespoke function.
+
+
+.SH TOPICS
+.SS SOURCE CODE STUDY
+.PP
+.SS MEMORY MATTERS
+.PP
+The special Bash struct
+.B SHELL_VAR
+is the handle in which values are manipulated in Bash scripts and
+builtin commands.
+.SS BUILDING WITH STRINGS
+.PP
+It may be obvious that there will be Bash API tools to accomplish
+in C anything that can be done in a Bash script.  Look for the
+builtin tools before implementing a new method.
+.TP
+.B Joining Multiple Strings
+.PP
+.p_savestring
+.p_array_create
+.p_array_insert
+.p_array_to_string
+.p_array_dispose
+.PP
+
+When a string value might go out of scope before may will be accessible when
+needed, you will need to save a copy.  Parsing the
+.B WORD_LIST
+of a builtin function is an example:
+.PP
+.EX
+#define RETURN_NAME \(dqJOIN_RESULT\(dq
+static int join_builtin(WORD_LIST *list)
+{
+   int retval = EXECUTION_FAILURE;
+
+   \fBunbind_variable\fP(RETURN_NAME);
+   SHELL_VAR *sv_result = \fBbind_variable\fP(RETURN_NAME, (char*)NULL, 0);
+
+   if (list->word && list->word->word)
+   {
+      // First argument is the separator:
+      char *separator = list->word->word;
+
+      ARRAY *bank = \fBarray_create\fP();
+      WORD_LIST *ptr = list->next;
+      while (ptr && ptr->word->word)
+      {
+         \fBarray_insert\fP(bank, bank->num_elements+1, ptr->word->word);
+         ptr = ptr->next;
+      }
+
+      // Don't bother joining unless there are some strings
+      if (bank->num_elements > 0)
+      {
+         char *joined = \fBarray_to_string\fP(bank, separator, 0);
+         \fBarray_dispose\fP(bank);
+         sv_result->value = joined;
+         \fBVUNSETATTR\fP(sv_result, att_invisible);
+
+         retval = EXECUTION_SUCCESS;
+      }
+   }
+
+   return retval;
+}
+.EE
+.SS DISMANTLING VARIABLES
+.PP
+A
+.B SHELL_VAR
+is allocated on several levels, and can be deconstructed by degrees.
+.PP
+Let's examine the levels of a
+.BR SHELL_VAR ,
+starting with the lowest level
+.TP
+.B the value member
+is a pointer to char that may also be cast to another type,
+most often 
+The purpose of a
+.B SHELL_VAR
+is to allow a script developer to store and access data.
+The
+.B value*
+member holds the address of the data in whatever form it takes.
+.IP
+By default, the
+.B value*
+member points to a character string, but it may also point to
+an 
+.BR ARRAY " or " HASH_TABLE 
+(AKA
+.BR "associative array" )
+object.
+
+
+
+.SH MEMORY MANAGEMENT
+.TP
+.B Heap-Return Functions
+Functions like
+.BR savestring ", " itos ", " array_create ", and " assoc_create
+return pointers to heap-allocated memory.
+To prevent memory leaks, the returned objects must either be
+freed explicitly, or attached to a
+.B SHELL_VAR
+or other complex object that will take responsiblity for the
+resource.
+.TP
+.B Heap-Save Functions
+Many functions that have
+.B char*
+parameters make heap-based copies of the string arguments.
+These include functions like
+.BR bind_variable ", " array_insert ", and " assoc_insert .
+Using
+.B savestring
+as an argument to these types of functions will result in a
+memory leak.
+.TP
+.B Complex Objects
+Objects like
+.BR SHELL_VAR ", " ARRAY ", and " HASH_TABLE
+are complex objects that contain at multiple pointers to heap
+memory objects.  
+For example,
+.B SHELL_VAR
+has three heap-allocated pointers,
+.BR name ", " value ", and " exportstr ,
+of which only
+.B name
+is required.
+.IP
+It is safer to use Bash functions to create and destroy these
+objects, and safest to allow Bash to create them as part of
+creating a
+.B SHELL_VAR
+and use the object attached to the new
+.BR SHELL_VAR .
+
