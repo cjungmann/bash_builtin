@@ -4,22 +4,13 @@
 \- bash_builtin project coding guide
 .SH DESCRIPTION
 .PP
-This is an entry-point for Bash builtin man page references.
-.PP
-Since it is needed to develop Bash builtins, it is assumed
-that the Bash builtins development package,
-.B bash-builtins
-is installed.  It is further assumed that the header files of
-.B bash-builtins
-are found in
-.IR /usr/include/bash .
-Adjust your search directory if your installation differs from
-this assumption.
-.PP
-Topics will be covered in pages with
-.B bashbi_
-prefixes.
+This page uses an easy-to-remember name to serve as a directory
+to related man pages that support development of Bash builtins.
 .SH TOPICS
+.PP
+The page names and descriptions below have been changing as I try
+to find an organizing principle.  Don't be afraid to use the
+materials, but be prepared for misalignment of topics and content.
 .TP
 .BR bashbi_vars (7)
 Structure of
@@ -29,18 +20,14 @@ from
 along with a summary of important variable manipulation
 functions.
 .TP
+.BR bashbi_examples (7)
+A quick guide to prototypes and usage of a selection of fundamental
+Bash internal functions.  This includes a
+.B SYNOPSIS
+section of prototypes and a set of examples that illustrate their
+use.
+.TP
 .BR bashbi_internals (7)
 A discussion of Bash resources that can be called from the
 C code of a Bash builtin command.  This includes the steps
 needed for calling a script function.
-.TP
-.BR bashbi_collections (7)
-.IR "Comming Attraction" :
-References to help construct various Bash collections, from script
-declared
-.BR ARRAY " and " HASH_TABLE
-(associative arrays), to
-.BR WORD_LIST ,
-which is a linked-list of strings that is how Bash passes arguments
-to compliant bash functions, including script functions and Bash
-builtins.
