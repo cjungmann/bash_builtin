@@ -50,39 +50,38 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
    if (!argeater_process(args, &TEMPLATE_declare_arg_map))
    {
       (*ERROR_SINK)("Error process arguments.");
-      exit_code = EXECUTION_FAILURE;
+      goto early_exit;
    }
-   else
+
+   if (handle_name == NULL)
    {
-      if (handle_name)
+      (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
+      goto early_exit;
+   }
+
+   int hlen = TEMPLATE_calc_handle_size(string_arg);
+
+   char *buff = xmalloc(hlen);
+   if (buff)
+   {
+      TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen, string_arg);
+
+      if (th)
       {
-         int hlen = TEMPLATE_calc_handle_size(string_arg);
-
-         char *buff = xmalloc(hlen);
-         if (buff)
-         {
-            TEMPLATEH* th = TEMPLATE_initialize_handle(buff, hlen, string_arg);
-
-            if (th)
-            {
-               SHELL_VAR *newsv = NULL;
-               exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
-            }
-            else
-            {
-               (*ERROR_SINK)("TEMPLATE:handle initialization failed");
-               free(buff);
-               buff = NULL;
-            }
-         }
-         else
-            (*ERROR_SINK)("TEMPLATE:out-of-memory while allocating handle");
+         SHELL_VAR *newsv = NULL;
+         exit_code = install_payload_to_shell_var(&newsv, handle_name, buff);
       }
       else
-         (*ERROR_SINK)("TEMPLATE:declare requires a handle name");
-
+      {
+         // TEMPLATE_initialize_handle will have already sent the message
+         free(buff);
+         buff = NULL;
+      }
    }
+   else
+      (*ERROR_SINK)("TEMPLATE:out-of-memory while allocating handle");
 
+  early_exit:
    return exit_code;
 }
 
