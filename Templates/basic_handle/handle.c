@@ -36,10 +36,18 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
 
    pack_string_in_block(&handle->data.string, &cur_buff, end_buff, string);
 
+   // TEMPLATE_declare should have calculated the appropriate
+   // buffer length by calling TEMPLATE_calc_handle_size, so
+   // we're just "protecting" with this assert:
    assert(cur_buff == end_buff);
 
    // If necessary, set other handle data, including settings
    // contingent on the content of any submitted strings
+
+   // DEVELOPER NOTE: The calling function (TEMPLATE_declare())
+   //                 assumes that any failure in this function will
+   //                 have already called (*ERROR_SINK) with the
+   //                 explanation.
 
    return handle;
 }
