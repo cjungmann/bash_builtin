@@ -7,6 +7,7 @@ TEMPLATE_exit_on_error()
                $(( "${BASH_LINENO[0]}" - 1 )) \
                "${BASH_SOURCE[1]}"
         printf $'   \e[31;1m%s\e[m\n' "$TEMPLATE_ERROR"
+        read -sn1
         exit 1
     fi
 }
