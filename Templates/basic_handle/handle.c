@@ -51,3 +51,10 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
 
    return handle;
 }
+
+void TEMPLATE_dispose(TEMPLATEH *handle)
+{
+   // Simply free by default, but provide appropriate code
+   // if memory model demands additional steps.
+   free(handle);
+}

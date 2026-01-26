@@ -1,5 +1,6 @@
 #include "shell_vars.h"
 #include "error_handling.h"
+#include "handle.h"
 
 /**
  * @brief Duplicate of private Bash function `dispose_variable_value`.
@@ -23,6 +24,8 @@ void local_dispose_variable_value(SHELL_VAR *var)
       dispose_command(function_cell(var));
    else if (nameref_p(var))
       FREE(nameref_cell(var));
+   else if (TEMPLATE_p(var))
+      TEMPLATE_dispose(TEMPLATE_cell(var));
    else
       FREE(value_cell(var));
 
@@ -35,6 +38,13 @@ dispose_shell_var_type DISPOSE_SHELL_VAR = local_dispose_variable_value;
 
 /**
  * @brief Simplify handle-making with generic creation of shell var
+ *
+ * This method for populating a SHELL_VAR does many things:
+ * 1. It reuses an existing SHELL_VAR if it has the same name.
+ * 2. Creates a new SHELL_VAR if an existing one is not available.
+ * 3. Uses @ref local_dispose_variable_value to appropriately
+ *    reuse a SHELL_VAR of the same type to prevent memory leaks.
+ * 4. Uses *ERROR_SINK to report errors
  */
 int install_payload_to_shell_var(SHELL_VAR **sv, const char *name, void *payload)
 {
