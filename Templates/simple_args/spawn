@@ -10,8 +10,8 @@ fi
 
 declare name="$1"
 declare c_name="${name}.c"
-declare -u error_name="${name}_err"
-declare -u value_name="${name}_val"
+declare -u error_name="${name}_error"
+declare -u value_name="${name}_value"
 
 if [ -f "$c_name" ]; then
     printf "Source file '$c_name' already exists, aborting conversion.\n"
@@ -25,8 +25,8 @@ fi
 printf "Converting 'template.def' to '%s'.\n" "$c_name"
 printf "Defining the error string name: %s.\n" "$error_name"
 declare -a sed_es=(
-    -e 's/TEMPLATE_ERR/'"$error_name"'/g'
-    -e 's/TEMPLATE_VAL/'"$value_name"'/g'
+    -e 's/TEMPLATE_ERROR/'"$error_name"'/g'
+    -e 's/TEMPLATE_VALUE/'"$value_name"'/g'
     )
 sed "${sed_es[@]}" template.def > "$c_name"
 
