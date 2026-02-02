@@ -1,8 +1,3 @@
-void sterilize_shell_var(SHELL_VAR *sv);
-bool get_or_make_shell_var(SHELL_VAR **sv, const char *name);
-int vprintf_to_shell_var(SHELL_VAR *sv, const char *format, va_list ap_arg);
-int printf_to_shell_var(SHELL_VAR *sv, const char *format, ...);
-
 /**
  * @file utilities.c
  * @brief Small collection of Bash SHELL_VAR functions
@@ -11,11 +6,19 @@ int printf_to_shell_var(SHELL_VAR *sv, const char *format, ...);
  * file to maintain focus on its mission.
  */
 
+void sterilize_shell_var(SHELL_VAR *sv);
+bool get_or_make_shell_var(SHELL_VAR **sv, const char *name);
+int vprintf_to_shell_var(SHELL_VAR *sv, const char *format, va_list ap_arg);
+int printf_to_shell_var(SHELL_VAR *sv, const char *format, ...);
+
 /**
  * @brief Enhanced version of dispose_variable_value
- * This function was copied from variables.c from the Bash source
- * code and enhanced by removing data type flags to make a blank
- * slate of the supplied SHELL_VAR
+ * 
+ * This function was modeled after the static (unavailable) function
+ * dispose_variable_value from Bash source module variables.c.  It
+ * is enhanced with the clearing of the attributes flag that identifies
+ * the type to restore the SHELL_VAR to a being blank slate save the
+ * non-type attributes that may still be necessary.
  */
 void sterilize_shell_var(SHELL_VAR *sv)
 {
