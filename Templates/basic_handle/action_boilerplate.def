@@ -19,9 +19,10 @@
 // command-line argument settings after the argument map
 // to which they are attached is used by argeater's
 // `argeater_process` function.
-static bool flag_variable = false;
-static SHELL_VAR *retval = NULL;
+static bool flag_variable;
+static const char *var_name;
 
+#define DEFAULT_VAR "TEMPLATE_VALUE"
 
 // ACTIONS ARRAY
 // Refer to argeater(3) for documentation, argeater(7) for summary
@@ -29,8 +30,8 @@ AE_ITEM boilerplate_actions[] = {
    {(const char**)&flag_variable, "flag", 'f', AET_FLAG_OPTION,
     "set flag to toggle setting", NULL, argeater_bool_setter},
 
-   {(const char **)&retval, "retval", '\0', AET_ARGUMENT,
-    "variable name to use for the return value", NULL, TEMPLATE_argeater_return_sv_setter},
+   {&var_name, "var", 'v', AET_VALUE_OPTION,
+    "assign output to shell variable VAR instead of TEMPLATE_VALUE" }
 };
 
 // ACTION MAP
@@ -43,7 +44,7 @@ AE_MAP TEMPLATE_boilerplate_arg_map = INIT_MAP(boilerplate_actions);
 
 int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
 {
-   int exit_code = EXECUTION_SUCCESS;
+   int exit_code = EXECUTION_FAILURE;
 
    // Delete these statements if this action does not require a handle:
    __attribute__((unused))
@@ -51,25 +52,27 @@ int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
 
    // Initialize STATUS VARIABLES for each action invocation:
    flag_variable = false;
-   retval = NULL;
+   var_name = DEFAULT_VAR;
 
    if (!argeater_process(args, &TEMPLATE_boilerplate_arg_map))
-   {
       (*ERROR_SINK)("Error process arguments.");
-      exit_code = EXECUTION_FAILURE;
-   }
    else
    {
-      // Perform the action according to the submitted arguments.
-
-      // Example of setting a boolean return value:
-      if (retval)
+      SHELL_VAR *sv = NULL;
+      exit_code = get_or_make_shell_var(&sv, var_name);
+      if (exit_code == EXECUTION_SUCCESS)
       {
-         (*DISPOSE_SHELL_VAR)(retval);
-         char *p = xmalloc(2);
-         p[0] = '1';
-         p[1] = 0;
-         retval->value = p;
+         // unconditionally remove invisibility since it's
+         // reasonably likely to be set.
+         VUNSETATTR(sv, att_invisible);
+
+         (*DISPOSE_SHELL_VAR)(sv);
+         sv->value = savestring("bogus string");
+
+         // Deal with datatype attributes, removing invalid
+         // ones and setting the appropriate one if necessary:
+         VUNSETATTR(sv, att_array|att_function|att_integer|att_assoc);
+         VSETATTR(sv, att
       }
    }
 

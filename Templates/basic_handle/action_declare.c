@@ -20,6 +20,9 @@
 // `argeater_process` function.
 static const char *handle_name;
 static const char *string_arg;
+static const char *var_name;
+
+#define DEFAULT_VAR "TEMPLATE_VALUE"
 
 // Array of items that associate status variables to the means
 // to access them and text to be used in a help display:
@@ -28,7 +31,10 @@ AE_ITEM declare_actions[] = {
     "Name of new handle", NULL, argeater_string_setter },
 
    {&string_arg, "string", '\0', AET_ARGUMENT,
-    "Random string value", NULL, argeater_string_setter }
+    "Random string value", NULL, argeater_string_setter },
+
+   {&var_name, "var", 'v', AET_VALUE_OPTION,
+    "assign output to shell variable VAR instead of TEMPLATE_VALUE" }
 };
 
 // File-scope instantiation of argument map to be used
@@ -46,6 +52,7 @@ int TEMPLATE_declare(SHELL_VAR *sv_handle, ACLONE *args)
    // Initialize global static variables used in argeater map:
    handle_name = NULL;
    string_arg = NULL;
+   var_name = DEFAULT_VAR;
 
    if (!argeater_process(args, &TEMPLATE_declare_arg_map))
    {
