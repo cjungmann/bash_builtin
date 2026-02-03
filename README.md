@@ -87,13 +87,13 @@ can find some instruction in the source files.
 
 The project include various learning resources:
 
-- **Simple Builtin Examples**
+- **Simple Builtin Examples**  
   With the exception of **utilities.c**, the main directory files
   with the `.c` extension create simple Bash builtins.  **hellow.c**
   was my first Bash builtin, and most of the others each explore a
   simple assumed capablility of the Bash environment.
 
-- **Templates Directory**
+- **Templates Directory**  
   I created templates to help me complete the various requirements
   of compiling a Bash builtin.  Most have not been touched in a
   while.  However, with my primary interest being a builtin with
@@ -101,7 +101,7 @@ The project include various learning resources:
   `Templates/basic_handle` continues to be modified as my experience
   and needs evolve.
 
-- **Man Pages**
+- **Man Pages**  
   Since Bash is a TUI (text user-interface) shell, I am writing
   TUI-focused `man` pages for my benefit as I continue to develop
   certain Bash builtins.  Some man pages remain from older efforts,
@@ -112,3 +112,11 @@ The project include various learning resources:
   At some point, I will set up *github actions* to generate and make
   links to HTML pages generated from the `groff` documents that make
   up the man pages.
+
+- **My Observations**  
+  I haven't made many of these yet, but I may add more to preserve
+  the memory of failed experiments.
+
+  - Overriding PUT and GET with **dynamic_value** and **assign_func**
+    I worked on this and was disappointed.  [Dynamics](README_dynamics.md)
+    is a record of what I learned.
