@@ -6,7 +6,7 @@
 
 bool TEMPLATE_p(SHELL_VAR *var)
 {
-   if (var && specialvar_p(var))
+   if (var && specialvar_p(var) && var->value!=NULL)
       return (0 == strcmp((char*)var->value, TEMPLATE_HANDLE_ID));
 
    return false;
@@ -25,7 +25,6 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
                                       const char *string)
 {
    memset(buffer, 0, buffer_len);
-   TEMPLATEH *handle = (TEMPLATEH*)buffer;
    memcpy(buffer, TEMPLATE_HANDLE_ID, sizeof(TEMPLATE_HANDLE_ID));
 
    char *cur_buff = buffer;
@@ -34,6 +33,7 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
    // skip past the handle struct
    cur_buff += sizeof(TEMPLATEH);
 
+   TEMPLATEH *handle = (TEMPLATEH*)buffer;
    pack_string_in_block(&handle->data.string, &cur_buff, end_buff, string);
 
    // TEMPLATE_declare should have calculated the appropriate
@@ -54,7 +54,7 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
 
 void TEMPLATE_dispose(TEMPLATEH *handle)
 {
-   // Simply free by default, but provide appropriate code
-   // if memory model demands additional steps.
-   free(handle);
+   // Do not neglect attention to the matter of disposing
+   // of the handle resources:
+   assert(0);
 }
