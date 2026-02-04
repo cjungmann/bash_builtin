@@ -5,13 +5,14 @@
 /**
  * @brief Implementation of private Bash function `dispose_variable_value`.
  *
- * According to the data type of the SHELL_VAR, this function
- * frees its *value* member and sets it to NULL.
+ * There is a version of this function in the Bash source code,
+ * but it is static and thus unavailable for use by a developer
+ * of Bash builtins.
  *
- * Since this function is primarily employed to reuse an existing
- * SHELL_VAR that may be of any data type, it unsets the
- * type-identifying attribute that identifies the nature of the
- * SHELL_VAR's *value* member.
+ * Since the utility of the hidden function is useful, this version
+ * aims to reproduce it with an extra section that does the same
+ * thing with this project's handle, ie delete it and its subordinate
+ * linked memory.
  *
  * This function could be customized to handle bespoke project
  * shell variables.
@@ -46,8 +47,9 @@ void local_dispose_variable_value(SHELL_VAR *sv)
       }
       else if (TEMPLATE_p(sv))
       {
-         TEMPLATE_dispose(TEMPLATE_cell(sv));
-         free(sv->value);
+         TEMPLATEH *handle = TEMPLATE_cell(sv);
+         TEMPLATE_deprovision(handle);
+         free(handle);
          VUNSETATTR(sv, att_special);
       }
       else
