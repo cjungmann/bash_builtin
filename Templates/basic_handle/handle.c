@@ -62,7 +62,7 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
  * that is necessary, the function calling TEMPLATE_dispose should
  * do it.
  */
-void TEMPLATE_dispose(TEMPLATEH *handle)
+void TEMPLATE_deprovision(TEMPLATEH *handle)
 {
    // Do not neglect attention to the matter of disposing
    // of the handle resources:

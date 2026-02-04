@@ -36,7 +36,7 @@ TEMPLATEH * TEMPLATE_initialize_handle(char *buffer,
                                        int buffer_len,
                                        const char *string);
 
-void TEMPLATE_dispose(TEMPLATEH *handle);
+void TEMPLATE_deprovision(TEMPLATEH *handle);
 /** @} */
 
 /**
