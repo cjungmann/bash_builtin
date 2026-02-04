@@ -52,6 +52,16 @@ TEMPLATEH* TEMPLATE_initialize_handle(char *buffer,
    return handle;
 }
 
+/**
+ * @brief Frees any resources held by the handle
+ *
+ * For the developer: this function should put the handle in a state
+ * where the handle can be queried without error and can be freed
+ * without leaking any resources.  That is, free the memory, close
+ * any system resources, but DON'T delete the handle itself.  If
+ * that is necessary, the function calling TEMPLATE_dispose should
+ * do it.
+ */
 void TEMPLATE_dispose(TEMPLATEH *handle)
 {
    // Do not neglect attention to the matter of disposing
