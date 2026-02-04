@@ -47,6 +47,7 @@ void local_dispose_variable_value(SHELL_VAR *sv)
       else if (TEMPLATE_p(sv))
       {
          TEMPLATE_dispose(TEMPLATE_cell(sv));
+         free(sv->value);
          VUNSETATTR(sv, att_special);
       }
       else
