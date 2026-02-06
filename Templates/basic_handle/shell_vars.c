@@ -73,7 +73,7 @@ dispose_shell_var_type DISPOSE_SHELL_VAR = local_dispose_variable_value;
  * variable by name in the current context.  If it fails, a new
  * SHELL_VAR will be created with the requested name.
  */
-bool get_or_make_shell_var(SHELL_VAR **sv, const char *name)
+int get_or_make_shell_var(SHELL_VAR **sv, const char *name)
 {
    SHELL_VAR *tsv = find_variable(name);
    // Acceptable existing variable must be in same context
@@ -88,7 +88,7 @@ bool get_or_make_shell_var(SHELL_VAR **sv, const char *name)
    if (tsv)
       *sv = tsv;
 
-   return tsv != NULL;
+   return ((tsv == NULL) ? EXECUTION_FAILURE : EXECUTION_SUCCESS);
 }
 
 /**
