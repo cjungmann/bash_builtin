@@ -14,6 +14,7 @@ declare REPNAME="$1"
 
 declare -a sed_args=(
     -i
+    -e 's/'"${TWORD}_VALUE/${REPNAME^^}_VALUE"'/g'
     -e 's/'"${TWORD}_ERROR/${REPNAME^^}_ERROR"'/g'
     -e 's/'"${TWORD}/${REPNAME}"'/g'
 )
