@@ -72,7 +72,6 @@ int TEMPLATE_boilerplate(SHELL_VAR *sv_handle, ACLONE *args)
          // Deal with datatype attributes, removing invalid
          // ones and setting the appropriate one if necessary:
          VUNSETATTR(sv, att_array|att_function|att_integer|att_assoc);
-         VSETATTR(sv, att
       }
    }
 
