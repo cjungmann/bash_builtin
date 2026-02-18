@@ -138,3 +138,42 @@ int printf_to_shell_var(SHELL_VAR *sv, const char *format, ...)
   return len;
 }
 
+/**
+ * @brief Uses familiar printf conventions to write text
+ *        to a block of heap memory.
+ */
+char* savevprintf(const char *format, va_list ap_arg)
+{
+   char *retval = NULL;
+
+   // Use copy of ap_arg to measure string length:
+   va_list ap_copy;
+   va_copy(ap_copy, ap_arg);
+   int ccount = vsnprintf(NULL, 0, format, ap_copy);
+   va_end(ap_copy);
+
+   if (ccount>0)
+   {
+      ++ccount;
+
+      retval = (char*)xmalloc(ccount);
+      if (retval)
+         vsnprintf(retval, ccount, format, ap_arg);
+   }
+
+   return retval;
+}
+
+/**
+ * @brief Basically just collects arguments into a va_list and
+ *        dispatches them to savevprintf().
+ */
+char* saveprintf(const char *format, ...)
+{
+  va_list list_args;
+  va_start(list_args, format);
+  char *retval = savevprintf(format, list_args);
+  va_end(list_args);
+  return retval;
+}
+
