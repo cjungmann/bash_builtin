@@ -56,7 +56,7 @@ void drain_error_sink(void)
 {
    SHELL_VAR *sv = find_variable(error_name);
    if (sv)
-      sterilize_shell_var(error_name);
+      sterilize_shell_var(sv);
 }
 
 /**
@@ -66,7 +66,7 @@ void clear_result_value(const char *value_name)
 {
    SHELL_VAR *sv = find_variable(value_name);
    if (sv)
-      sterilize_shell_var(value_name);
+      sterilize_shell_var(sv);
 }
 
 /*
